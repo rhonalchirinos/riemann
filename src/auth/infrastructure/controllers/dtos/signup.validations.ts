@@ -34,8 +34,8 @@ export class SignupValidation implements PipeTransform<SignupUserDto> {
   private signupUserSchemaFactory() {
     return z
       .object({
-        name: z.string().min(2, 'Name must be at least 2 chars'),
-        email: z.string().email('Invalid email address'),
+        name: z.string().min(2, 'Name must be at least 2 chars').max(200),
+        email: z.string().email('Invalid email address').max(180),
         password: z
           .string()
           .min(6, 'Password must be at least 6 chars')
