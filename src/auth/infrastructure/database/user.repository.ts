@@ -81,15 +81,10 @@ export class UserRepository implements UserRepositoryPort {
    *
    * @param user
    */
-  async update(user: User): Promise<User> {
+  async update(id: number, value: Prisma.UserUpdateInput): Promise<User> {
     const updatedUser = await this.prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        name: user.name,
-        password: user.password,
-      },
+      where: { id },
+      data: value,
     });
 
     return updatedUser;

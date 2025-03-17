@@ -12,7 +12,7 @@ export interface UserRepositoryPort {
   /**
    *
    */
-  update(user: User): Promise<User>;
+  update(id: number, value: Prisma.UserUpdateInput): Promise<User>;
 
   // /**
   //  *

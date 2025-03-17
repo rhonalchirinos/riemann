@@ -29,11 +29,12 @@ import { ProfileController } from './infrastructure/controllers/profile.controll
 import { LoginController } from './infrastructure/controllers/login.controller';
 import { SignupController } from './infrastructure/controllers/signup.controller';
 import { ProfileValidation } from './infrastructure/controllers/dtos/profile.validations';
+import { LoginValidation } from './infrastructure/controllers/dtos/login.validations';
 
 @Module({
   imports: [
     DatabaseModule,
-    CacheModule.register(),
+    CacheModule.register({ ttl: 60, max: 1000 }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'FynVfpT19fKeEvCS',
       signOptions: { expiresIn: '1h' },
@@ -58,10 +59,22 @@ import { ProfileValidation } from './infrastructure/controllers/dtos/profile.val
       provide: CACHE_ACCESS_TOKEN_REPOSITORY,
       useClass: CacheAccessTokenRepository,
     },
+
+    /**
+     * Validations
+     */
     SignupValidation,
+    LoginValidation,
     ProfileValidation,
+
+    /*
+     * Configurations
+     */
     EncryptionService,
 
+    /*
+     * Guards
+     */
     JwtStrategy,
     JwtRefreshStrategy,
 

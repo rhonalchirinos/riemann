@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PG_USER_REPOSITORY } from '@auth/infrastructure/database/user.repository';
 import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository.d';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class ProfileUsecase {
@@ -9,12 +10,16 @@ export class ProfileUsecase {
     private authRepository: UserRepositoryPort,
   ) {}
 
-  async execute(userId: number): Promise<any> {
+  async getUser(userId: number): Promise<User> {
     const user = await this.authRepository.getById(userId);
-
     if (!user) {
       throw new Error('User not found');
     }
+    return user;
+  }
+
+  async execute(userId: number): Promise<any> {
+    const user = await this.getUser(userId);
 
     return {
       id: user.id,
@@ -26,15 +31,9 @@ export class ProfileUsecase {
   }
 
   async executeUpdateProfile(userId: number, data: any): Promise<any> {
-    const user = await this.authRepository.getById(userId);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    user.name = data.name;
-
-    const userNew = await this.authRepository.update(user);
+    const userNew = await this.authRepository.update(userId, {
+      name: data.name,
+    });
 
     return {
       id: userNew.id,

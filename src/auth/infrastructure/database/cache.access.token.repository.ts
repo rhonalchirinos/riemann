@@ -26,12 +26,12 @@ export class CacheAccessTokenRepository implements AccessTokenRepositoryPort {
       return cachedUser;
     }
 
-    const user = await this.accessTokenRepository.findById(id);
-    if (user) {
-      await this.cacheManager.set(id, user, 60);
+    const access = await this.accessTokenRepository.findById(id);
+    if (access) {
+      await this.cacheManager.set(id, access, 60 * 1000);
     }
 
-    return user;
+    return access;
   }
 
   /**
