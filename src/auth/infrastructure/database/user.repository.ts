@@ -76,6 +76,24 @@ export class UserRepository implements UserRepositoryPort {
 
     return userExists > 0;
   }
+
+  /**
+   *
+   * @param user
+   */
+  async update(user: User): Promise<User> {
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        name: user.name,
+        password: user.password,
+      },
+    });
+
+    return updatedUser;
+  }
 }
 
 export const PG_USER_REPOSITORY = 'PG_USER_REPOSITORY';

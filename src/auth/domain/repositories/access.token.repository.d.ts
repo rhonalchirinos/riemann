@@ -4,6 +4,7 @@ import { AccessToken, Prisma } from '@prisma/client';
  * Interface for the user repository port.
  */
 export interface AccessTokenRepositoryPort {
+  delete(accessToken: AccessToken): unknown;
   /**
    *
    */
@@ -13,4 +14,9 @@ export interface AccessTokenRepositoryPort {
    *
    */
   findById(token: string): Promise<AccessToken | null>;
+
+  /**
+   *
+   */
+  findByRefreshToken(refreshToken: string): Promise<AccessToken | null>;
 }

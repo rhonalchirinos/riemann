@@ -4,25 +4,24 @@ import {
   UserRepository,
 } from '@auth/infrastructure/database/user.repository';
 import {
-  AccessTokenRepository,
-  PG_ACCESS_TOKEN_REPOSITORY,
-} from '@auth/infrastructure/database/access.token.repository';
-import {
   CACHE_ACCESS_TOKEN_REPOSITORY,
   CacheAccessTokenRepository,
 } from '@auth/infrastructure/database/cache.access.token.repository';
+import {
+  AccessTokenRepository,
+  PG_ACCESS_TOKEN_REPOSITORY,
+} from '@auth/infrastructure/database/access.token.repository';
 
 import { DatabaseModule } from '@database/database.module';
-import { SignupUsecase } from '@auth/application/usecases/signup.usecase';
 import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '../services/encryption.service';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { AccessToken, PrismaClient, User } from '@prisma/client';
-import { LoginUseCase } from '@auth/application/usecases/login.usecase';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'crypto';
 import { CacheModule } from '@nestjs/cache-manager';
+import { v4 } from 'uuid';
+import { RefreshUseCase } from './refresh.token.usecase';
 
 export type MockContext = {
   prisma: DeepMockProxy<PrismaClient>;
@@ -38,13 +37,14 @@ export const createMockContext = (): MockContext => {
       },
       accessToken: {
         create: jest.fn(),
+        delete: jest.fn(),
       },
     }),
   };
 };
 
-describe('AuthController', () => {
-  let loginUseCase: LoginUseCase;
+describe('Refresh Token Usecase', () => {
+  let refreshUseCase: RefreshUseCase;
   let mockContext: MockContext;
   let encryptionService: EncryptionService;
   let jwtService: JwtService;
@@ -63,8 +63,7 @@ describe('AuthController', () => {
       providers: [
         SignupValidation,
         EncryptionService,
-        SignupUsecase,
-        LoginUseCase,
+        RefreshUseCase,
         {
           provide: PG_USER_REPOSITORY,
           useClass: UserRepository,
@@ -86,18 +85,18 @@ describe('AuthController', () => {
       ],
     }).compile();
 
-    loginUseCase = module.get<LoginUseCase>(LoginUseCase);
+    refreshUseCase = module.get<RefreshUseCase>(RefreshUseCase);
     encryptionService = module.get<EncryptionService>(EncryptionService);
     jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
-    expect(loginUseCase).toBeDefined();
+    expect(refreshUseCase).toBeDefined();
     expect(mockContext).toBeDefined();
     expect(jwtService).toBeDefined();
   });
 
-  it('should login a user', async () => {
+  it('should refresh a new access token', async () => {
     const user: User = {
       id: 1,
       email: 'testing@gmail.com',
@@ -109,18 +108,15 @@ describe('AuthController', () => {
     mockContext.prisma.user.findUnique.mockResolvedValue(user);
 
     const accessToken: AccessToken = {
-      id: randomUUID(),
+      id: v4(),
       userId: 1,
       expiresAt: new Date(),
       createdAt: new Date(),
-      refreshToken: null,
+      refreshToken: v4(),
     };
     mockContext.prisma.accessToken.create.mockResolvedValue(accessToken);
 
-    const result = await loginUseCase.execute({
-      email: 'testing@gmail.com',
-      password: 'HolaMundo#1200',
-    });
+    const result = await refreshUseCase.execute(accessToken);
 
     expect(result).toBeDefined();
   });

@@ -27,6 +27,21 @@ export class AccessTokenRepository implements AccessTokenRepositoryPort {
 
   /**
    *
+   * @param refreshToken
+   * @returns
+   */
+  async findByRefreshToken(refreshToken: string): Promise<AccessToken | null> {
+    const tokenRecord = await this.prisma.accessToken.findUnique({
+      where: {
+        refreshToken: refreshToken,
+      },
+    });
+
+    return tokenRecord;
+  }
+
+  /**
+   *
    * @param value
    *
    * @returns
@@ -35,12 +50,25 @@ export class AccessTokenRepository implements AccessTokenRepositoryPort {
     const token = await this.prisma.accessToken.create({
       data: {
         id: value.id,
+        refreshToken: value.refreshToken,
         expiresAt: value.expiresAt,
         user: value.user,
       },
     });
 
     return token;
+  }
+
+  /**
+   *
+   * @param accessToken
+   */
+  async delete(accessToken: AccessToken): Promise<void> {
+    await this.prisma.accessToken.delete({
+      where: {
+        id: accessToken.id,
+      },
+    });
   }
 }
 

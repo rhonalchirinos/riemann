@@ -13,9 +13,11 @@ import { LoginUseCase } from '@auth/application/usecases/login.usecase';
 import { type LoginDto } from '@auth/application/usecases/dtos/login.dto';
 import { LoginValidation } from './dtos/login.validations';
 import { type SignupUserDto } from '@auth/application/usecases/dtos/signupuser.dto';
-import { User } from '@prisma/client';
+import { AccessToken, User } from '@prisma/client';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ProfileUsecase } from 'src/auth/application/usecases/profile.usecase';
+import { RefreshUseCase } from 'src/auth/application/usecases/refresh.token.usecase';
+import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +28,7 @@ export class AuthController {
     private signupUseCase: SignupUsecase,
     private loginUseCase: LoginUseCase,
     private profileUseCase: ProfileUsecase,
+    private refreshTokenUseCase: RefreshUseCase,
   ) {}
 
   @Post('signup')
@@ -50,7 +53,7 @@ export class AuthController {
   async login(@Body(LoginValidation) loginDto: LoginDto): Promise<any> {
     const data = await this.loginUseCase.execute(loginDto);
 
-    return { message: 'login successfully', data };
+    return { data };
   }
 
   @Get('profile')
@@ -59,6 +62,28 @@ export class AuthController {
     const { userId } = req.user as { userId: string };
     const user = await this.profileUseCase.execute(parseInt(userId));
 
-    return { user };
+    return { data: user };
+  }
+
+  @Post('profile')
+  @UseGuards(JwtAuthGuard)
+  async profileUpdate(@Request() req): Promise<any> {
+    console.log(req.body);
+    const { userId } = req.user as { userId: string };
+    const user = await this.profileUseCase.executeUpdateProfile(
+      parseInt(userId),
+      req.body,
+    );
+
+    return { data: user };
+  }
+
+  @Get('refresh')
+  @UseGuards(JwtRefreshGuard)
+  async refresh(@Request() req): Promise<any> {
+    const { accessToken } = req.user as { accessToken: AccessToken };
+    const data = await this.refreshTokenUseCase.execute(accessToken);
+
+    return { data };
   }
 }

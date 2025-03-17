@@ -46,6 +46,24 @@ export class CacheAccessTokenRepository implements AccessTokenRepositoryPort {
 
     return accessToken;
   }
+
+  /**
+   *
+   * @param refreshToken
+   * @returns
+   */
+  async findByRefreshToken(refreshToken: string): Promise<AccessToken | null> {
+    return await this.accessTokenRepository.findByRefreshToken(refreshToken);
+  }
+
+  /**
+   *
+   * @param accessToken
+   */
+  async delete(accessToken: AccessToken): Promise<void> {
+    await this.cacheManager.del(accessToken.id);
+    await this.accessTokenRepository.delete(accessToken);
+  }
 }
 
 export const CACHE_ACCESS_TOKEN_REPOSITORY = 'CACHE_ACCESS_TOKEN_REPOSITORY';

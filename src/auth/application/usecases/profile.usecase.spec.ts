@@ -66,6 +66,8 @@ describe('AuthController', () => {
       email: 'testing@gmail.com',
       name: 'Testing User',
       password: 'HolaMundo#1200',
+      createdAt: new Date(),
+      updatedAt: null,
     };
     mockContext.prisma.user.findUnique.mockResolvedValue(user);
 

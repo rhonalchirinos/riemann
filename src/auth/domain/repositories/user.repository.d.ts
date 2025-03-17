@@ -9,10 +9,10 @@ export interface UserRepositoryPort {
    */
   create(value: Prisma.UserCreateInput): Promise<User>;
 
-  // /**
-  //  *
-  //  */
-  // update(user: User): Promise<User>;
+  /**
+   *
+   */
+  update(user: User): Promise<User>;
 
   // /**
   //  *

@@ -22,6 +22,8 @@ import {
   CACHE_ACCESS_TOKEN_REPOSITORY,
   CacheAccessTokenRepository,
 } from '@auth/infrastructure/database/cache.access.token.repository';
+import { RefreshUseCase } from './application/usecases/refresh.token.usecase';
+import { JwtRefreshStrategy } from './infrastructure/guards/jwt-refresh.strategy';
 
 @Module({
   imports: [
@@ -50,8 +52,10 @@ import {
     SignupUsecase,
     LoginUseCase,
     ProfileUsecase,
+    RefreshUseCase,
     EncryptionService,
     JwtStrategy,
+    JwtRefreshStrategy,
   ],
 })
 export class AuthModule {}

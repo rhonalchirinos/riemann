@@ -1,12 +1,14 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-
-import { type AccessTokenRepositoryPort } from '@auth/domain/repositories/access.token.repository';
-import { CACHE_ACCESS_TOKEN_REPOSITORY } from '@auth/infrastructure/database/cache.access.token.repository';
+import { CACHE_ACCESS_TOKEN_REPOSITORY } from '../database/cache.access.token.repository';
+import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access.token.repository';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(
     @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
     private accessTokenRepository: AccessTokenRepositoryPort,
@@ -21,11 +23,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload.sub) {
       throw new UnauthorizedException();
     }
-    const accessToken = await this.accessTokenRepository.findById(payload.sub);
+    const accessToken = await this.accessTokenRepository.findByRefreshToken(
+      payload.sub,
+    );
     if (!accessToken) {
       throw new UnauthorizedException();
     }
 
-    return { id: accessToken.id, userId: accessToken.userId };
+    return { accessToken };
   }
 }
