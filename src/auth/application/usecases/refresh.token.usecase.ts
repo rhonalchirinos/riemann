@@ -24,14 +24,16 @@ export class RefreshUseCase extends AccessTokenGenerateUseCase {
   }
 
   async execute(accessToken: AccessToken): Promise<AccessTokenDto> {
-    const user = await this.authRepository.getById(accessToken.userId);
+    const user = await this.authRepository.findById(accessToken.userId);
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
     const token = await this.generateAccessToken(user);
-    this.accessTokenRepository.delete(accessToken);
+
+    await this.accessTokenRepository.delete(accessToken);
+
     return token;
   }
 }

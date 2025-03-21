@@ -23,6 +23,9 @@ export abstract class AccessTokenGenerateUseCase {
 
   protected async generateAccessToken(user: User): Promise<AccessTokenDto> {
     const expiresInSecods = 3600;
+    if (!this.accessTokenRepository) {
+      throw new Error('JwtService is not defined');
+    }
 
     const sub = v4();
     const token = await this.generateJWT(sub, expiresInSecods);

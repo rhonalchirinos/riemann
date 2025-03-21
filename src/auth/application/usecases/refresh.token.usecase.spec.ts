@@ -102,6 +102,7 @@ describe('Refresh Token Usecase', () => {
       email: 'testing@gmail.com',
       name: 'Testing User',
       password: await encryptionService.hashPassword(String('HolaMundo#1200')),
+      emailVerified: false,
       createdAt: new Date(),
       updatedAt: null,
     };

@@ -6,22 +6,21 @@ import { AdminModule } from './admin/admin.module';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { HomeModule } from './home/home.module';
-import { ConfigModule } from '@nestjs/config';
-
-import configuration from './config/configuration';
+import { MailModule } from './mail/mail.module';
+import { MyConfigModule } from './config/config.module';
 
 @Module({
   imports: [
+    MyConfigModule,
     AuthModule,
     AdminModule,
     UsersModule,
     DatabaseModule,
     HomeModule,
-    ConfigModule.forRoot({
-      load: [configuration],
-    }),
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [MyConfigModule],
 })
 export class AppModule {}

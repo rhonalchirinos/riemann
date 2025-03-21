@@ -4,18 +4,21 @@ import {
   UserRepository,
 } from '@auth/infrastructure/database/user.repository';
 import { DatabaseModule } from '@database/database.module';
-
-import { SignupUsecase } from '@auth/application/usecases/signup.usecase';
 import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
 
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '../services/encryption.service';
 
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { VerificationEmailUseCase } from './verification.email.usecase';
+import { CacheModule } from '@nestjs/cache-manager';
+import { MailerService } from '@nestjs-modules/mailer';
+import { JwtModule } from '@nestjs/jwt';
 
 export type MockContext = {
   prisma: DeepMockProxy<PrismaClient>;
+  mail: DeepMockProxy<MailerService>;
 };
 
 export const createMockContext = (): MockContext => {
@@ -27,61 +30,49 @@ export const createMockContext = (): MockContext => {
         count: jest.fn(),
       },
     }),
+    mail: mockDeep<MailerService>({
+      sendMail: jest.fn(),
+    }),
   };
 };
 
-describe('AuthController', () => {
-  let signupUsecase: SignupUsecase;
+describe('Verification Email UseCase', () => {
+  let verificationEmail: VerificationEmailUseCase;
   let mockContext: MockContext;
 
   beforeEach(async () => {
     mockContext = createMockContext();
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
+      imports: [
+        DatabaseModule,
+        CacheModule.register({ ttl: 60, max: 1000 }),
+        JwtModule.register({ secret: 'FynVfpT19fKeEvCS' }),
+      ],
       providers: [
         SignupValidation,
         EncryptionService,
-        SignupUsecase,
+        VerificationEmailUseCase,
         {
           provide: PG_USER_REPOSITORY,
           useClass: UserRepository,
         },
         {
+          provide: MailerService,
+          useFactory: () => mockContext.mail,
+        },
+        {
           provide: PrismaService,
-          useFactory: () => {
-            return mockContext.prisma;
-          },
+          useFactory: () => mockContext.prisma,
         },
       ],
     }).compile();
-    signupUsecase = module.get<SignupUsecase>(SignupUsecase);
+    verificationEmail = module.get<VerificationEmailUseCase>(
+      VerificationEmailUseCase,
+    );
   });
 
   it('should be defined', () => {
-    expect(signupUsecase).toBeDefined();
+    expect(verificationEmail).toBeDefined();
     expect(mockContext).toBeDefined();
-  });
-
-  it('should signup a user', async () => {
-    const user: User = {
-      id: 1,
-      email: 'testing@gmail.com',
-      name: 'Testing User',
-      password: 'HolaMundo#1200',
-      emailVerified: false,
-      createdAt: new Date(),
-      updatedAt: null,
-    };
-    mockContext.prisma.user.count.mockResolvedValue(0);
-    mockContext.prisma.user.create.mockResolvedValue(user);
-
-    const dataUser = {
-      email: 'testing@gmail.com',
-      name: 'Testing User',
-      password: 'HolaMundo#1200',
-    };
-
-    const result = await signupUsecase.execute(dataUser);
-    expect(result).toBeDefined();
   });
 });

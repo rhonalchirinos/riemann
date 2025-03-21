@@ -1,0 +1,58 @@
+<html lang='es'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Verifica tu correo electrónico</title>
+    <style>
+      .email-container {
+        text-align: center;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      .verify-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 20px 0;
+      }
+      .footer {
+        color: #888;
+        font-size: 12px;
+        margin-top: 20px;
+      }
+      img.logo {
+        max-width: 120px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='email-container'>
+      <img class='logo' src='URL_LOGO' alt='Logo Marca' />
+      <h2>Hola NOMBRE_USUARIO,</h2>
+      <p>Gracias por registrarte en NOMBRE_SERVICIO. Por favor, confirma tu
+        dirección de correo electrónico haciendo clic en el botón a
+        continuación:</p>
+      <a href='URL_VERIFICACION' class='verify-button'>Verificar mi correo
+        electrónico
+      </a>
+      {{token}}
+      <p>Si el botón no funciona, copia y pega el siguiente enlace en tu
+        navegador:</p>
+      <p>URL_VERIFICACION</p>
+      <p>Este enlace expirará en 24 horas por seguridad.</p>
+      <img
+        src='URL_IMAGEN_SECUNDARIA'
+        alt='Imagen adicional'
+        style='max-width: 100%; margin-top: 20px;'
+      />
+      <p class='footer'>Si no solicitaste esta verificación, por favor ignora
+        este mensaje.</p>
+      <p class='footer'>Gracias,<br />El equipo de NOMBRE_SERVICIO</p>
+    </div>
+  </body>
+</html>

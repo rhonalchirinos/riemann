@@ -17,9 +17,10 @@ export class LoginUseCase extends AccessTokenGenerateUseCase {
   constructor(
     @Inject(PG_USER_REPOSITORY)
     authRepository: UserRepositoryPort,
-    
+
     @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
     accessTokenRepository: AccessTokenRepositoryPort,
+
     jwtService: JwtService,
     encryptionService: EncryptionService,
   ) {

@@ -11,7 +11,7 @@ export class ProfileUsecase {
   ) {}
 
   async getUser(userId: number): Promise<User> {
-    const user = await this.authRepository.getById(userId);
+    const user = await this.authRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }

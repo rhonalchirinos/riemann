@@ -16,7 +16,7 @@ export class UserRepository implements UserRepositoryPort {
    *
    * @returns
    */
-  async getById(id: number): Promise<User | null> {
+  async findById(id: number): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,

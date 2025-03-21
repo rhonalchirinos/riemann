@@ -14,13 +14,15 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  email       String        @unique
-  password    String
-  name        String?
-  AccessToken AccessToken[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?     @updatedAt()
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  password      String
+  name          String?
+  emailVerified Boolean       @default(false)
+  AccessToken   AccessToken[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime?     @updatedAt()
+  Entreprise    Enterprise[]
 }
 
 model AccessToken {
@@ -30,4 +32,14 @@ model AccessToken {
   userId       Int
   user         User      @relation(fields: [userId], references: [id])
   createdAt    DateTime  @default(now())
+}
+
+model Enterprise {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  description String
+  ownerId     Int
+  owner       User      @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
 }

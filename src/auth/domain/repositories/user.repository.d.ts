@@ -1,6 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 
 /**
+ *
  * Interface for the user repository port.
  */
 export interface UserRepositoryPort {
@@ -22,12 +23,7 @@ export interface UserRepositoryPort {
   /**
    *
    */
-  getById(id: number): Promise<User | null>;
-
-  // /**
-  //  *
-  //  */
-  // getUsers(): Promise<User[]>;
+  findById(id: number): Promise<User | null>;
 
   /**
    *

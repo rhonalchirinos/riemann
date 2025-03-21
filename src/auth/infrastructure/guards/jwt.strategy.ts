@@ -4,16 +4,18 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { type AccessTokenRepositoryPort } from '@auth/domain/repositories/access.token.repository';
 import { CACHE_ACCESS_TOKEN_REPOSITORY } from '@auth/infrastructure/database/cache.access.token.repository';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
+    config: ConfigService,
     @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
     private accessTokenRepository: AccessTokenRepositoryPort,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET || 'FynVfpT19fKeEvCS',
+      secretOrKey: config.get<string>('jwt.secret'),
     });
   }
 

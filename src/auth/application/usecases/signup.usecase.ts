@@ -26,8 +26,9 @@ export class SignupUsecase {
       password: hashedPassword,
     });
 
-    // send welcome email
-    // send email verification
+    // send welcome and verification email
+
+    // this.email.sendemail ...
 
     return user;
   }

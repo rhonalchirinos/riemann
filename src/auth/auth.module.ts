@@ -30,14 +30,23 @@ import { LoginController } from './infrastructure/controllers/login.controller';
 import { SignupController } from './infrastructure/controllers/signup.controller';
 import { ProfileValidation } from './infrastructure/controllers/dtos/profile.validations';
 import { LoginValidation } from './infrastructure/controllers/dtos/login.validations';
+import { ConfigService } from '@nestjs/config';
+import { MyConfigModule } from 'src/config/config.module';
+import { VerificationEmailUseCase } from './application/usecases/verification.email.usecase';
+import { VerifyController } from './infrastructure/controllers/verify.controller';
+import { JwtVerifyStrategy } from './infrastructure/guards/jwt-verify.strategy';
 
 @Module({
   imports: [
     DatabaseModule,
     CacheModule.register({ ttl: 60, max: 1000 }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'FynVfpT19fKeEvCS',
-      signOptions: { expiresIn: '1h' },
+    JwtModule.registerAsync({
+      imports: [MyConfigModule],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('jwt.secret', 'FynVfpT19fKeEvCS'),
+        signOptions: { expiresIn: '1h' },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [
@@ -45,6 +54,7 @@ import { LoginValidation } from './infrastructure/controllers/dtos/login.validat
     LoginController,
     SignupController,
     RefreshController,
+    VerifyController,
   ],
   providers: [
     {
@@ -77,6 +87,7 @@ import { LoginValidation } from './infrastructure/controllers/dtos/login.validat
      */
     JwtStrategy,
     JwtRefreshStrategy,
+    JwtVerifyStrategy,
 
     /*
      * USES CASES
@@ -85,6 +96,7 @@ import { LoginValidation } from './infrastructure/controllers/dtos/login.validat
     LoginUseCase,
     ProfileUsecase,
     RefreshUseCase,
+    VerificationEmailUseCase,
   ],
 })
 export class AuthModule {}
