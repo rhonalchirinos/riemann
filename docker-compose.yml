@@ -1,11 +1,11 @@
 services:
   riemann:
-    image: oven/bun:1.2.1-alpine
+    image: oven/bun:debian
     container_name: sriemann
     working_dir: /app
     volumes:
       - .:/app
-    command: sh -c "bun install && bun --hot --watch src/main"
+    command: sh -c "bun install && bun --hot --watch src/main.ts"
     networks:
       - sriemann
     ports:

@@ -1,7 +1,7 @@
 import { Controller, UseGuards, Request, Get } from '@nestjs/common';
-import { AccessToken } from '@prisma/client';
 import { RefreshUseCase } from 'src/auth/application/usecases/refresh.token.usecase';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
+import { type AuthRequest } from 'src/shared/dto/request';
 
 @Controller('auth')
 export class RefreshController {
@@ -12,9 +12,8 @@ export class RefreshController {
 
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
-  async refresh(@Request() req): Promise<any> {
-    const { accessToken } = req.user as { accessToken: AccessToken };
-    const data = await this.refreshTokenUseCase.execute(accessToken);
+  async refresh(@Request() req: AuthRequest): Promise<any> {
+    const data = await this.refreshTokenUseCase.execute(req.user.accessToken);
 
     return { data };
   }

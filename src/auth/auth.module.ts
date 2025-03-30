@@ -35,6 +35,8 @@ import { MyConfigModule } from 'src/config/config.module';
 import { VerificationEmailUseCase } from './application/usecases/verification.email.usecase';
 import { VerifyController } from './infrastructure/controllers/verify.controller';
 import { JwtVerifyStrategy } from './infrastructure/guards/jwt-verify.strategy';
+import { LogoutUsecase } from './application/usecases/logout.usecase';
+import { LogoutController } from './infrastructure/controllers/logout.controller';
 
 @Module({
   imports: [
@@ -52,6 +54,7 @@ import { JwtVerifyStrategy } from './infrastructure/guards/jwt-verify.strategy';
   controllers: [
     ProfileController,
     LoginController,
+    LogoutController,
     SignupController,
     RefreshController,
     VerifyController,
@@ -94,6 +97,7 @@ import { JwtVerifyStrategy } from './infrastructure/guards/jwt-verify.strategy';
      */
     SignupUsecase,
     LoginUseCase,
+    LogoutUsecase,
     ProfileUsecase,
     RefreshUseCase,
     VerificationEmailUseCase,

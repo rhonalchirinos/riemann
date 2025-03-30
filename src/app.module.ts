@@ -8,16 +8,19 @@ import { DatabaseModule } from './database/database.module';
 import { HomeModule } from './home/home.module';
 import { MailModule } from './mail/mail.module';
 import { MyConfigModule } from './config/config.module';
+import { EnterpriseModule } from './enterprise/enterprise.module';
 
 @Module({
   imports: [
     MyConfigModule,
     AuthModule,
+    EnterpriseModule,
     AdminModule,
     UsersModule,
     DatabaseModule,
     HomeModule,
     MailModule,
+    EnterpriseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

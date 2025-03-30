@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { hash, compare, genSalt } from 'bcryptjs';
 
 @Injectable()
 export class EncryptionService {
@@ -11,20 +11,20 @@ export class EncryptionService {
    * @returns
    */
   async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(this.saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await genSalt(this.saltRounds);
+    const hashedPassword = await hash(password, salt);
 
     if (!hashedPassword) {
       throw new HttpException('Error hashing password', 500);
     }
 
-    return hashedPassword as string;
+    return hashedPassword;
   }
 
   /***
    *
    */
   async comparePassword(password: string, hash: string): Promise<boolean> {
-    return (await bcrypt.compare(password, hash)) as boolean;
+    return await compare(password, hash);
   }
 }

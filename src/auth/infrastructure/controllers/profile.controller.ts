@@ -11,6 +11,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ProfileUsecase } from 'src/auth/application/usecases/profile.usecase';
 import { type ProfileDto } from 'src/auth/application/usecases/dtos/profile.dto';
 import { ProfileValidation } from './dtos/profile.validations';
+import { type AuthRequest } from 'src/shared/dto/request';
 
 @Controller('auth')
 export class ProfileController {
@@ -21,9 +22,8 @@ export class ProfileController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  async profile(@Request() req): Promise<any> {
-    const { userId } = req.user as { userId: string };
-    const user = await this.profileUseCase.execute(parseInt(userId));
+  async profile(@Request() req: AuthRequest): Promise<any> {
+    const user = await this.profileUseCase.execute(parseInt(req.user.userId));
 
     return { data: user };
   }
@@ -32,12 +32,11 @@ export class ProfileController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ProfileValidation)
   async profileUpdate(
-    @Request() req,
+    @Request() req: AuthRequest,
     @Body(ProfileValidation) profileDto: ProfileDto,
   ): Promise<any> {
-    const { userId } = req.user as { userId: string };
     const user = await this.profileUseCase.executeUpdateProfile(
-      parseInt(userId),
+      parseInt(req.user.userId),
       profileDto,
     );
 

@@ -19,10 +19,10 @@ model User {
   password      String
   name          String?
   emailVerified Boolean       @default(false)
-  AccessToken   AccessToken[]
+  accessTokens  AccessToken[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime?     @updatedAt()
-  Entreprise    Enterprise[]
+  entreprises   Enterprise[]
 }
 
 model AccessToken {
@@ -36,8 +36,9 @@ model AccessToken {
 
 model Enterprise {
   id          String    @id @default(uuid()) @db.Uuid
-  name        String
-  description String
+  slug        String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(80)
+  description String    @db.VarChar(300)
   ownerId     Int
   owner       User      @relation(fields: [ownerId], references: [id])
   createdAt   DateTime  @default(now())
