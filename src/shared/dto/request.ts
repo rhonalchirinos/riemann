@@ -1,4 +1,4 @@
-import { AccessToken } from '@prisma/client';
+import { AccessToken, Enterprise } from '@prisma/client';
 import { Request } from 'express';
 
 interface AuthenticatedUser {
@@ -8,4 +8,6 @@ interface AuthenticatedUser {
 
 export interface AuthRequest extends Request {
   user: AuthenticatedUser;
+  enterpriseId: string;
+  enterprise: Enterprise;
 }

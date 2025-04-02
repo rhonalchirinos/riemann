@@ -1,7 +1,6 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Enterprise } from '@prisma/client';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
-import { PG_ENTERPRISE_REPOSITORY } from 'src/enterprise/infrastructure/databases/entreprise.repository';
 import { type EnterpriseCreateDto } from './dtos/enterprise.create.dto';
 
 @Injectable()
@@ -9,10 +8,7 @@ export class EnterpriseUpdateUseCase {
   /**
    *
    */
-  public constructor(
-    @Inject(PG_ENTERPRISE_REPOSITORY)
-    private enterpriseRepository: EnterpriseRepositoryPort,
-  ) {}
+  public constructor(private enterpriseRepository: EnterpriseRepositoryPort) {}
 
   /**
    *

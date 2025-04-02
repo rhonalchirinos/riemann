@@ -15,9 +15,9 @@ export class EnterpriseRepository implements EnterpriseRepositoryPort {
    * @param ownerId
    * @returns
    */
-  async findAll(ownerId: number): Promise<any[]> {
+  async findAll(ownerId: number): Promise<Enterprise[]> {
     return await this.prisma.enterprise.findMany({
-      where: { owner: { id: ownerId } },
+      where: { ownerId },
       orderBy: { createdAt: 'desc' },
     });
   }

@@ -3,7 +3,7 @@ import { Enterprise } from '@prisma/client';
 export interface EnterpriseRepositoryPort {
   findAll(ownerId: ?number): Promise<Enterprise[]>;
 
-  create(value: Primsa.EnterpriseCreateInput): Promise<Enterprise>;
+  create(value: EnterpriseCreateInput): Promise<Enterprise>;
 
   update(id: string, value: Primsa.EnterpriseUpdateInput): Promise<Enterprise>;
 
@@ -11,7 +11,7 @@ export interface EnterpriseRepositoryPort {
 
   findById(
     id: string,
-    options: { ownerId?: number } | null,
+    options?: { ownerId?: number } | null,
   ): Promise<Enterprise | null>;
 
   findBySlug(slug: string): Promise<Enterprise | null>;
