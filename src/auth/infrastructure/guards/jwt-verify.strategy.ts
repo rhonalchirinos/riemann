@@ -4,10 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtVerifyStrategy extends PassportStrategy(
-  Strategy,
-  'jwt-verify',
-) {
+export class JwtVerifyStrategy extends PassportStrategy(Strategy, 'jwt-verify') {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromBodyField('token'),

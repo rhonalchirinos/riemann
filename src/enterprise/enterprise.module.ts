@@ -27,6 +27,7 @@ import { REQUEST } from '@nestjs/core';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseController } from './infrastructure/controllers/enterprise.controller';
 import { EnterprisesController } from './infrastructure/controllers/enterprises.controller';
+import { MailerService } from '@nestjs-modules/mailer';
 
 const controllers = [
   EnterpriseController,
@@ -54,7 +55,7 @@ const usecases = [
 const usecasesInvitatios = [
   InvitationListUseCase,
   InvitationDeleteUseCase,
-  InvitationInviteUseCase,
+  //  InvitationInviteUseCase,
 ].map((useCase) => ({
   provide: useCase,
   useFactory: (repository: InvitationRepositoryPort) => new useCase(repository),
@@ -83,7 +84,12 @@ const usecasesInvitatios = [
      */
     ...usecases,
     ...usecasesInvitatios,
-
+    {
+      provide: InvitationInviteUseCase,
+      useFactory: (repository: InvitationRepositoryPort, mail: MailerService) =>
+        new InvitationInviteUseCase(repository, mail),
+      inject: [PG_INVITATION_REPOSITORY, MailerService],
+    },
     {
       provide: 'EnterpriseInterceptor',
       useFactory: (

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { ZodSchema } from 'zod';
-import { type ProfileDto } from 'src/auth/application/usecases/dtos/profile.dto';
+import { type ProfileDto } from 'src/profile/application/usecases/dtos/profile.dto';
 
 @Injectable()
 export class ProfileValidation implements PipeTransform<ProfileDto> {

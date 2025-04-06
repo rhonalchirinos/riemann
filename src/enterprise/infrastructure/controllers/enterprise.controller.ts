@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Put,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { EnterpriseDeleteUseCase } from 'src/enterprise/application/enterprise.delete.usecase';
 import { type AuthRequest } from 'src/shared/dto/request';
@@ -29,24 +20,15 @@ export class EnterpriseController {
   ) {}
 
   @Delete(':id')
-  async items(
-    @Request() request: AuthRequest,
-    @Param('id') id: string,
-  ): Promise<any> {
+  async items(@Request() request: AuthRequest, @Param('id') id: string): Promise<any> {
     await this.deleteUseCase.execute(parseInt(request.user.userId), id);
 
     return;
   }
 
   @Get(':id')
-  async show(
-    @Request() request: AuthRequest,
-    @Param('id') id: string,
-  ): Promise<any> {
-    const enterprise = await this.showUseCase.execute(
-      parseInt(request.user.userId),
-      id,
-    );
+  async show(@Request() request: AuthRequest, @Param('id') id: string): Promise<any> {
+    const enterprise = await this.showUseCase.execute(parseInt(request.user.userId), id);
 
     return { data: enterprise };
   }
@@ -57,11 +39,7 @@ export class EnterpriseController {
     @Param('id') id: string,
     @Body(EnterpriseValidation) data: EnterpriseCreateDto,
   ): Promise<any> {
-    const user = await this.updateUseCase.execute(
-      parseInt(req.user.userId),
-      id,
-      data,
-    );
+    const user = await this.updateUseCase.execute(parseInt(req.user.userId), id, data);
 
     return { data: user };
   }

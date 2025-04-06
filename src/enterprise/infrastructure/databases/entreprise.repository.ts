@@ -47,10 +47,7 @@ export class EnterpriseRepository implements EnterpriseRepositoryPort {
    * @param value
    * @returns
    */
-  async update(
-    id: string,
-    value: Prisma.EnterpriseUpdateInput,
-  ): Promise<Enterprise> {
+  async update(id: string, value: Prisma.EnterpriseUpdateInput): Promise<Enterprise> {
     const entreprise = await this.prisma.enterprise.update({
       where: { id },
       data: {

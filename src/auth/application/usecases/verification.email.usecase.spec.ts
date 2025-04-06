@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  PG_USER_REPOSITORY,
-  UserRepository,
-} from '@auth/infrastructure/database/user.repository';
+import { PG_USER_REPOSITORY, UserRepository } from '@auth/infrastructure/database/user.repository';
 import { DatabaseModule } from '@database/database.module';
 import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
 
@@ -66,9 +63,7 @@ describe('Verification Email UseCase', () => {
         },
       ],
     }).compile();
-    verificationEmail = module.get<VerificationEmailUseCase>(
-      VerificationEmailUseCase,
-    );
+    verificationEmail = module.get<VerificationEmailUseCase>(VerificationEmailUseCase);
   });
 
   it('should be defined', () => {

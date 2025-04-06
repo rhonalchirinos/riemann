@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  PG_USER_REPOSITORY,
-  UserRepository,
-} from '@auth/infrastructure/database/user.repository';
+import { PG_USER_REPOSITORY, UserRepository } from '@auth/infrastructure/database/user.repository';
 
 import { SignupUsecase } from '@auth/application/usecases/signup.usecase';
 import { EncryptionService } from '@auth/application/services/encryption.service';

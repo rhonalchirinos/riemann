@@ -29,10 +29,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
     private repository: EnterpriseRepositoryPort,
   ) {}
 
-  async intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     console.log('Before...');
     const now = Date.now();
 
@@ -41,11 +38,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
 
     if (!enterpriseId) {
       return throwError(
-        () =>
-          new HttpException(
-            'Organization ID is required',
-            HttpStatus.BAD_REQUEST,
-          ),
+        () => new HttpException('Organization ID is required', HttpStatus.BAD_REQUEST),
       );
     }
 
@@ -53,9 +46,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
     this.request.enterpriseId = enterprise.id;
     this.request.enterprise = enterprise;
 
-    return next
-      .handle()
-      .pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
+    return next.handle().pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
   }
 
   /**
@@ -63,10 +54,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
    * @param enterpriseId
    * @param userId
    */
-  async findEnterpriseById(
-    enterpriseId: string,
-    userId: string,
-  ): Promise<Enterprise> {
+  async findEnterpriseById(enterpriseId: string, userId: string): Promise<Enterprise> {
     const userEnterprise = await this.cacheManager.get<boolean>(
       `enterprise-users:${enterpriseId}:${userId}`,
     );
@@ -74,11 +62,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
     if (!userEnterprise) {
       // todo: add the check if the user is in the enterprise
 
-      await this.cacheManager.set(
-        `enterprise-users:${enterpriseId}:${userId}`,
-        true,
-        60 * 1000,
-      );
+      await this.cacheManager.set(`enterprise-users:${enterpriseId}:${userId}`, true, 60 * 1000);
     }
 
     const enterprise = await this.loadEnterpriseData(enterpriseId);
@@ -90,9 +74,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
    *
    */
   async loadEnterpriseData(enterpriseId: string): Promise<Enterprise> {
-    const cachedEnterprise = await this.cacheManager.get<Enterprise>(
-      `enterprise:${enterpriseId}`,
-    );
+    const cachedEnterprise = await this.cacheManager.get<Enterprise>(`enterprise:${enterpriseId}`);
 
     if (cachedEnterprise) {
       return cachedEnterprise;
@@ -104,11 +86,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
       throw new HttpException('Enterprise not found', HttpStatus.NOT_FOUND);
     }
 
-    await this.cacheManager.set(
-      `enterprise:${enterpriseId}`,
-      enterprise,
-      60 * 1000,
-    );
+    await this.cacheManager.set(`enterprise:${enterpriseId}`, enterprise, 60 * 1000);
 
     return enterprise;
   }

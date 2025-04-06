@@ -39,10 +39,7 @@ export class EnterpriseValidation {
         if (!ctx.path.length) {
           const id = this.request?.params?.id as string;
 
-          const existingUser = await this.enterpriseRepository.existsSlug(
-            data.slug,
-            id,
-          );
+          const existingUser = await this.enterpriseRepository.existsSlug(data.slug, id);
 
           if (existingUser) {
             ctx.addIssue({

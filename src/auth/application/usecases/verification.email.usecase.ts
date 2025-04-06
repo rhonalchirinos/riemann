@@ -43,10 +43,7 @@ export class VerificationEmailUseCase {
     if (count >= this.MAX_EMAILS) {
       return false;
     }
-    const token = await this.jwtService.signAsync(
-      { sub: user.id },
-      { expiresIn: 3600 },
-    );
+    const token = await this.jwtService.signAsync({ sub: user.id }, { expiresIn: 3600 });
     await this.mail.sendMail({
       to: user.email,
       subject: 'Welcome to Nice App! Confirm your Email',

@@ -16,9 +16,7 @@ export class SignupUsecase {
   async execute(userInfo: SignupUserDto): Promise<User> {
     const { email, name, password } = userInfo;
 
-    const hashedPassword = await this.encryptionService.hashPassword(
-      String(password),
-    );
+    const hashedPassword = await this.encryptionService.hashPassword(String(password));
 
     const user = await this.authRepository.create({
       email: String(email).toLocaleLowerCase(),

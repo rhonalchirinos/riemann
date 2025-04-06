@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RefreshController } from '@auth/infrastructure/controllers/refresh.controller';
 import { SignupUsecase } from '@auth/application/usecases/signup.usecase';
-import {
-  PG_USER_REPOSITORY,
-  UserRepository,
-} from '@auth/infrastructure/database/user.repository';
+import { PG_USER_REPOSITORY, UserRepository } from '@auth/infrastructure/database/user.repository';
 import {
   AccessTokenRepository,
   PG_ACCESS_TOKEN_REPOSITORY,
@@ -22,13 +19,10 @@ import { LoginUseCase } from '@auth/application/usecases/login.usecase';
 import { JwtModule } from '@nestjs/jwt';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RefreshUseCase } from './application/usecases/refresh.token.usecase';
-import { ProfileUsecase } from './application/usecases/profile.usecase';
 
 import { JwtRefreshStrategy } from './infrastructure/guards/jwt-refresh.strategy';
-import { ProfileController } from './infrastructure/controllers/profile.controller';
 import { LoginController } from './infrastructure/controllers/login.controller';
 import { SignupController } from './infrastructure/controllers/signup.controller';
-import { ProfileValidation } from './infrastructure/controllers/dtos/profile.validations';
 import { LoginValidation } from './infrastructure/controllers/dtos/login.validations';
 import { ConfigService } from '@nestjs/config';
 import { MyConfigModule } from 'src/config/config.module';
@@ -52,7 +46,6 @@ import { LogoutController } from './infrastructure/controllers/logout.controller
     }),
   ],
   controllers: [
-    ProfileController,
     LoginController,
     LogoutController,
     SignupController,
@@ -78,7 +71,6 @@ import { LogoutController } from './infrastructure/controllers/logout.controller
      */
     SignupValidation,
     LoginValidation,
-    ProfileValidation,
 
     /*
      * Configurations
@@ -98,9 +90,9 @@ import { LogoutController } from './infrastructure/controllers/logout.controller
     SignupUsecase,
     LoginUseCase,
     LogoutUsecase,
-    ProfileUsecase,
     RefreshUseCase,
     VerificationEmailUseCase,
   ],
+  exports: [PG_USER_REPOSITORY, PG_ACCESS_TOKEN_REPOSITORY, CACHE_ACCESS_TOKEN_REPOSITORY],
 })
 export class AuthModule {}

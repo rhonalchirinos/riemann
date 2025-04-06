@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { InvitationListUseCase } from 'src/enterprise/application/invitation.list.usecase';
 import { type AuthRequest } from 'src/shared/dto/request';
@@ -45,10 +38,7 @@ export class InvitationsController {
   async createInvitation(@Request() request: AuthRequest): Promise<any> {
     const enterprise = request.enterprise;
 
-    const invitation = await this.useCaseInvite.execute(
-      enterprise,
-      request.body as InvitationDto,
-    );
+    const invitation = await this.useCaseInvite.execute(enterprise, request.body as InvitationDto);
 
     return { data: invitation };
   }

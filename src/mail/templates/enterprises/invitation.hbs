@@ -1,0 +1,59 @@
+<html lang='es'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Invitación</title>
+    <style>
+      .email-container {
+        text-align: center;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      .verify-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 20px 0;
+      }
+      .footer {
+        color: #888;
+        font-size: 12px;
+        margin-top: 20px;
+      }
+      img.logo {
+        max-width: 120px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='email-container'>
+      <img class='logo' src='URL_LOGO' alt='Logo Marca' />
+      <h2>Hola NOMBRE_USUARIO,</h2>
+      <p>
+        Te invitamos a unirte a NOMBRE_SERVICIO como parte de la organización
+        NOMBRE_ORGANIZACION.
+      </p>
+
+      <a href='URL_VERIFICACION' class='verify-button'>Ver invitación</a>
+
+      {{token}}
+
+      <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+      <p>URL_VERIFICACION</p>
+
+      <img
+        src='URL_IMAGEN_SECUNDARIA'
+        alt='Imagen adicional'
+        style='max-width: 100%; margin-top: 20px;'
+      />
+
+      <p class='footer'>Si no solicitaste esta verificación, por favor ignora este mensaje.</p>
+      <p class='footer'>Gracias,<br />El equipo de NOMBRE_SERVICIO</p>
+    </div>
+  </body>
+</html>

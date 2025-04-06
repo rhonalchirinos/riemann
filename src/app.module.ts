@@ -9,11 +9,13 @@ import { HomeModule } from './home/home.module';
 import { MailModule } from './mail/mail.module';
 import { MyConfigModule } from './config/config.module';
 import { EnterpriseModule } from './enterprise/enterprise.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
     MyConfigModule,
     AuthModule,
+    ProfileModule,
     EnterpriseModule,
     AdminModule,
     UsersModule,

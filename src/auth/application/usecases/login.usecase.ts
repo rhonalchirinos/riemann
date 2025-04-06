@@ -35,15 +35,10 @@ export class LoginUseCase extends AccessTokenGenerateUseCase {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const user = await this.authRepository.findByEmail(
-      email.toLocaleLowerCase(),
-    );
+    const user = await this.authRepository.findByEmail(email.toLocaleLowerCase());
 
     if (user) {
-      const isPasswordValid = await this.encryptionService.comparePassword(
-        password,
-        user.password,
-      );
+      const isPasswordValid = await this.encryptionService.comparePassword(password, user.password);
 
       if (isPasswordValid) {
         return this.generateAccessToken(user);

@@ -11,14 +11,8 @@ export abstract class AccessTokenGenerateUseCase {
     protected jwtService: JwtService,
   ) {}
 
-  private async generateJWT(
-    sub: string,
-    expiresInSecods: number,
-  ): Promise<string> {
-    return await this.jwtService.signAsync(
-      { sub },
-      { expiresIn: expiresInSecods },
-    );
+  private async generateJWT(sub: string, expiresInSecods: number): Promise<string> {
+    return await this.jwtService.signAsync({ sub }, { expiresIn: expiresInSecods });
   }
 
   protected async generateAccessToken(user: User): Promise<AccessTokenDto> {

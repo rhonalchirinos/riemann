@@ -10,10 +10,7 @@ export class EnterpriseCreateUseCase {
    */
   public constructor(private enterpriseRepository: EnterpriseRepositoryPort) {}
 
-  async execute(
-    userId: number,
-    value: EnterpriseCreateDto,
-  ): Promise<Enterprise> {
+  async execute(userId: number, value: EnterpriseCreateDto): Promise<Enterprise> {
     const input = { ...value, owner: { connect: { id: userId } } };
     const enterprise = await this.enterpriseRepository.create(input);
 

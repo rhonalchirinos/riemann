@@ -34,10 +34,7 @@ export class EnterpriseUpdateUseCase {
       enterprise.name = value.name;
     }
 
-    await this.enterpriseRepository.update(
-      enterpriseId,
-      this.changes(enterprise, value),
-    );
+    await this.enterpriseRepository.update(enterpriseId, this.changes(enterprise, value));
 
     return enterprise;
   }

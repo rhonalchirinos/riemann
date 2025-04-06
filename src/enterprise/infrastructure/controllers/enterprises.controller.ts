@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { type EnterpriseCreateDto } from 'src/enterprise/application/dtos/enterprise.create.dto';
 import { EnterpriseCreateUseCase } from 'src/enterprise/application/enterprise.create.usecase';
@@ -36,10 +29,7 @@ export class EnterprisesController {
     @Request() req: AuthRequest,
     @Body(EnterpriseValidation) data: EnterpriseCreateDto,
   ): Promise<any> {
-    const user = await this.createUseCase.execute(
-      parseInt(req.user.userId),
-      data,
-    );
+    const user = await this.createUseCase.execute(parseInt(req.user.userId), data);
 
     return { data: user };
   }

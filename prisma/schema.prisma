@@ -78,7 +78,7 @@ model Invitation {
   id     String           @id @default(uuid()) @db.Uuid
   name   String           @db.VarChar(80)
   email  String           @db.VarChar(80)
-  token  String           @unique
+  token  String           @unique @db.VarChar(64)
   status InvitationStatus
 
   enterpriseId String     @db.Uuid

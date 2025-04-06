@@ -9,10 +9,7 @@ export interface EnterpriseRepositoryPort {
 
   delete(id: string): Promise<void>;
 
-  findById(
-    id: string,
-    options?: { ownerId?: number } | null,
-  ): Promise<Enterprise | null>;
+  findById(id: string, options?: { ownerId?: number } | null): Promise<Enterprise | null>;
 
   findBySlug(slug: string): Promise<Enterprise | null>;
 

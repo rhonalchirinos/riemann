@@ -17,9 +17,7 @@ export class SignupController {
 
   @Post('signup')
   @UsePipes(SignupValidation)
-  async signup(
-    @Body(SignupValidation) signupUserDto: SignupUserDto,
-  ): Promise<any> {
+  async signup(@Body(SignupValidation) signupUserDto: SignupUserDto): Promise<any> {
     const user: User = await this.signupUseCase.execute(signupUserDto);
 
     await this.verificationEmailUseCase.sendVerificationEmail(user);

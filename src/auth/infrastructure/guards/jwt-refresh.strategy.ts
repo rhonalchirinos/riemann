@@ -6,10 +6,7 @@ import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/acc
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(
-  Strategy,
-  'jwt-refresh',
-) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private config: ConfigService,
     @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
@@ -25,9 +22,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     if (!payload.sub) {
       throw new UnauthorizedException();
     }
-    const accessToken = await this.accessTokenRepository.findByRefreshToken(
-      payload.sub,
-    );
+    const accessToken = await this.accessTokenRepository.findByRefreshToken(payload.sub);
     if (!accessToken) {
       throw new UnauthorizedException();
     }

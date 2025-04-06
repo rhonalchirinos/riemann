@@ -59,10 +59,7 @@ export class InvitationRepository implements InvitationRepositoryPort {
   /**
    *
    */
-  async findByEmail(
-    enterpriseId: string,
-    email: string,
-  ): Promise<Invitation | null> {
+  async findByEmail(enterpriseId: string, email: string): Promise<Invitation | null> {
     return await this.prisma.invitation.findFirst({
       where: { enterpriseId, email },
     });

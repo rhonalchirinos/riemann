@@ -1,14 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PG_USER_REPOSITORY } from '@auth/infrastructure/database/user.repository';
+import { Injectable } from '@nestjs/common';
 import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository.d';
 import { User } from '@prisma/client';
 
 @Injectable()
 export class ProfileUsecase {
-  constructor(
-    @Inject(PG_USER_REPOSITORY)
-    private authRepository: UserRepositoryPort,
-  ) {}
+  constructor(private authRepository: UserRepositoryPort) {}
 
   async getUser(userId: number): Promise<User> {
     const user = await this.authRepository.findById(userId);

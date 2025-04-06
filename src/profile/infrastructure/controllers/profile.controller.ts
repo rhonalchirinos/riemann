@@ -1,26 +1,18 @@
-import {
-  Controller,
-  Post,
-  UseGuards,
-  Request,
-  Get,
-  UsePipes,
-  Body,
-} from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { ProfileUsecase } from 'src/auth/application/usecases/profile.usecase';
-import { type ProfileDto } from 'src/auth/application/usecases/dtos/profile.dto';
-import { ProfileValidation } from './dtos/profile.validations';
+import { Controller, Post, UseGuards, Request, Get, UsePipes, Body } from '@nestjs/common';
+import { ProfileUsecase } from 'src/profile/application/usecases/profile.usecase';
+import { type ProfileDto } from 'src/profile/application/usecases/dtos/profile.dto';
 import { type AuthRequest } from 'src/shared/dto/request';
+import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
+import { ProfileValidation } from './dtos/profile.validations';
 
-@Controller('auth')
+@Controller('auth/profile')
 export class ProfileController {
   /**
    *
    */
   public constructor(private profileUseCase: ProfileUsecase) {}
 
-  @Get('profile')
+  @Get()
   @UseGuards(JwtAuthGuard)
   async profile(@Request() req: AuthRequest): Promise<any> {
     const user = await this.profileUseCase.execute(parseInt(req.user.userId));
@@ -28,7 +20,7 @@ export class ProfileController {
     return { data: user };
   }
 
-  @Post('profile')
+  @Post()
   @UseGuards(JwtAuthGuard)
   @UsePipes(ProfileValidation)
   async profileUpdate(
