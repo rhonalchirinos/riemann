@@ -14,4 +14,6 @@ export interface ProfileInvitationRepositoryPort {
   accept(invitation: Invitation): Promise<void>;
 
   reject(invitation: Invitation): Promise<void>;
+
+  addEmployee(enterpriseId: string, userId: number): Promise<Employee>;
 }

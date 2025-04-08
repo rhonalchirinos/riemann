@@ -57,10 +57,7 @@ export class ProfileInvitationUsecase {
 
     await this.invitationRepository.accept(invitation);
 
-    // await this.enterpriseRepository.addUserToEnterprise(
-    //   invitation.enterpriseId,
-    //   user.id,
-    // );
+    await this.invitationRepository.addEmployee(invitation.enterpriseId, user.id);
   }
 
   /**

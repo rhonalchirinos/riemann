@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Enterprise, Prisma } from '@prisma/client';
+import { Employee, Enterprise, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 
@@ -113,6 +113,23 @@ export class EnterpriseRepository implements EnterpriseRepositoryPort {
     const exists = await this.prisma.enterprise.count({ where });
 
     return exists > 0;
+  }
+
+  /**
+   *
+   * @param enterpriseId
+   * @param userId
+   * @returns
+   */
+  async findEmployee(enterpriseId, userId): Promise<Employee | null> {
+    const employee = await this.prisma.employee.findFirst({
+      where: {
+        enterpriseId,
+        userId,
+      },
+    });
+
+    return employee;
   }
 
   /**

@@ -7,6 +7,7 @@ import {
   PG_ENTERPRISE_REPOSITORY,
 } from '../infrastructure/databases/entreprise.repository';
 import { type EnterpriseRepositoryPort } from '../domain/enterprise.repository';
+import { CACHE_MANAGER, Cache, CacheModule } from '@nestjs/cache-manager';
 
 describe('EnterpriseCreateUseCase', () => {
   let usecase: EnterpriseCreateUseCase;
@@ -18,13 +19,13 @@ describe('EnterpriseCreateUseCase', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
+      imports: [DatabaseModule, CacheModule.register({ ttl: 60, max: 1000 })],
       providers: [
         {
           provide: EnterpriseCreateUseCase.name,
-          useFactory: (repository: EnterpriseRepositoryPort) =>
-            new EnterpriseCreateUseCase(repository),
-          inject: [PG_ENTERPRISE_REPOSITORY],
+          useFactory: (repository: EnterpriseRepositoryPort, cache: Cache) =>
+            new EnterpriseCreateUseCase(repository, cache),
+          inject: [PG_ENTERPRISE_REPOSITORY, CACHE_MANAGER],
         },
         {
           provide: PG_ENTERPRISE_REPOSITORY,

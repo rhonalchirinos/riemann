@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Invitation, InvitationStatus } from '@prisma/client';
+import { Employee, Invitation, InvitationStatus } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile.invitation.repository';
 import { type InvitationWithEnterprise } from 'src/profile/domain/invitation';
@@ -45,6 +45,27 @@ export class ProfileInvitationRepository implements ProfileInvitationRepositoryP
         status: InvitationStatus.rejected,
       },
     });
+  }
+
+  async addEmployee(enterpriseId: string, userId: number): Promise<Employee> {
+    let employee = await this.prisma.employee.findFirst({
+      where: {
+        userId,
+        enterpriseId,
+      },
+    });
+
+    if (!employee) {
+      employee = await this.prisma.employee.create({
+        data: {
+          userId,
+          enterpriseId,
+          position: 'employee',
+        },
+      });
+    }
+
+    return employee;
   }
 }
 

@@ -2,13 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Enterprise } from '@prisma/client';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 import { type EnterpriseCreateDto } from './dtos/enterprise.create.dto';
+import { type Cache } from '@nestjs/cache-manager';
 
 @Injectable()
 export class EnterpriseUpdateUseCase {
   /**
    *
    */
-  public constructor(private enterpriseRepository: EnterpriseRepositoryPort) {}
+  public constructor(
+    private enterpriseRepository: EnterpriseRepositoryPort,
+    private cacheManager: Cache,
+  ) {}
 
   /**
    *
@@ -35,6 +39,8 @@ export class EnterpriseUpdateUseCase {
     }
 
     await this.enterpriseRepository.update(enterpriseId, this.changes(enterprise, value));
+
+    await this.cacheManager.del(`enterprise:${enterpriseId}`);
 
     return enterprise;
   }

@@ -48,8 +48,9 @@ const usecases = [
   EnterpriseUpdateUseCase,
 ].map((useCase) => ({
   provide: useCase,
-  useFactory: (repository: EnterpriseRepositoryPort) => new useCase(repository),
-  inject: [PG_ENTERPRISE_REPOSITORY],
+  useFactory: (repository: EnterpriseRepositoryPort, cache: Cache) =>
+    new useCase(repository, cache),
+  inject: [PG_ENTERPRISE_REPOSITORY, CACHE_MANAGER],
 }));
 
 const usecasesInvitatios = [

@@ -7,6 +7,7 @@ import {
   Inject,
   HttpException,
   HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Enterprise } from '@prisma/client';
@@ -29,24 +30,31 @@ export class EnterpriseInterceptor implements NestInterceptor {
     private repository: EnterpriseRepositoryPort,
   ) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    console.log('Before...');
+  async intercept(context?: ExecutionContext, next?: CallHandler): Promise<Observable<any>> {
+    // console.log('Before...');
     const now = Date.now();
 
     const { enterpriseId } = this.request.params;
     const { user } = this.request;
 
-    if (!enterpriseId) {
-      return throwError(
-        () => new HttpException('Organization ID is required', HttpStatus.BAD_REQUEST),
-      );
+    if (!enterpriseId || enterpriseId === 'undefined') {
+      throw new HttpException('Organization ID is required', HttpStatus.BAD_REQUEST);
     }
 
     const enterprise = await this.findEnterpriseById(enterpriseId, user.userId);
+
     this.request.enterpriseId = enterprise.id;
     this.request.enterprise = enterprise;
 
-    return next.handle().pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
+    if (!next) {
+      throw new HttpException('Not found Action', HttpStatus.NOT_FOUND);
+    }
+
+    return next.handle().pipe(
+      tap(() => {
+        /// console.log(`After... ${Date.now() - now}ms`);
+      }),
+    );
   }
 
   /**
@@ -55,17 +63,30 @@ export class EnterpriseInterceptor implements NestInterceptor {
    * @param userId
    */
   async findEnterpriseById(enterpriseId: string, userId: string): Promise<Enterprise> {
+    const enterprise = await this.loadEnterpriseData(enterpriseId);
+
+    if (enterprise.ownerId == parseInt(userId)) {
+      return enterprise;
+    }
+
     const userEnterprise = await this.cacheManager.get<boolean>(
       `enterprise-users:${enterpriseId}:${userId}`,
     );
 
     if (!userEnterprise) {
       // todo: add the check if the user is in the enterprise
+      const employee = await this.repository.findEmployee(enterpriseId, userId);
 
-      await this.cacheManager.set(`enterprise-users:${enterpriseId}:${userId}`, true, 60 * 1000);
+      if (!employee) {
+        throw new ForbiddenException('User not found in this organization');
+      }
+
+      await this.cacheManager.set(
+        `enterprise-users:${enterpriseId}:${userId}`,
+        employee,
+        60 * 1000,
+      );
     }
-
-    const enterprise = await this.loadEnterpriseData(enterpriseId);
 
     return enterprise;
   }
