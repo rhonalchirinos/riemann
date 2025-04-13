@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Query,
-  BadRequestException,
   HttpCode,
   UseGuards,
   Request,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { VerificationEmailUseCase } from 'src/auth/application/usecases/verification-email.usecase';
 import { JwtVerifyGuard } from '../guards/jwt-verify.guard';
@@ -32,12 +32,12 @@ export class VerifyController {
   @HttpCode(204)
   async verifyEmail(@Query('email') email: string): Promise<void> {
     if (!email) {
-      throw new BadRequestException('Email is required');
+      throw new UnprocessableEntityException('Email is required');
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      throw new BadRequestException('Invalid email format');
+      throw new UnprocessableEntityException('Invalid email format');
     }
 
     await this.verificationEmail.execute(email);

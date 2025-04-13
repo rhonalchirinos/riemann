@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { LoginUseCase } from './login.usecase';
-import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
 import { EncryptionService } from '../services/encryption.service';
 import { AccessTokenDto } from './dtos/access-token.dto';
 import { AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
-import { create } from 'domain';
 
-// filepath: src/auth/application/usecases/login.usecase.test.ts
+import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
 
 describe('LoginUseCase', () => {
   let loginUseCase: LoginUseCase;

@@ -29,8 +29,11 @@ describe('LoginController (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterAll(async () => {
     await app.close();
   });
 

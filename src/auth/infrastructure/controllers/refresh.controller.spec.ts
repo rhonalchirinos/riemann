@@ -15,7 +15,7 @@ describe('RefreshController (e2e)', () => {
     execute: jest.fn(),
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [RefreshController],
       providers: [
@@ -33,39 +33,44 @@ describe('RefreshController (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
-    jest.clearAllMocks();
+  afterAll(async () => {
     await app.close();
   });
 
-  it('should return refreshed data when use case executes successfully', async () => {
-    const mockAccessToken = 'mockAccessToken';
-    const mockResponseData = { token: 'newAccessToken' };
-
-    mockRefreshUseCase.execute.mockResolvedValueOnce(mockResponseData);
-
-    const response = await request(app.getHttpServer() as unknown as App)
-      .get('/auth/refresh')
-      .set('Authorization', `Bearer ${mockAccessToken}`);
-
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ data: mockResponseData });
-    expect(mockRefreshUseCase.execute).toHaveBeenCalledWith('mock-access-token');
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should return an error when use case throws an exception', async () => {
-    const mockAccessToken = 'mockAccessToken';
+  describe('POST /auth/refresh', () => {
+    it('should return refreshed data when use case executes successfully', async () => {
+      const mockAccessToken = 'mockAccessToken';
+      const mockResponseData = { token: 'newAccessToken' };
 
-    mockRefreshUseCase.execute.mockImplementation(() => {
-      throw new Error('Internal server error');
+      mockRefreshUseCase.execute.mockResolvedValueOnce(mockResponseData);
+
+      const response = await request(app.getHttpServer() as unknown as App)
+        .get('/auth/refresh')
+        .set('Authorization', `Bearer ${mockAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ data: mockResponseData });
+      expect(mockRefreshUseCase.execute).toHaveBeenCalledWith('mock-access-token');
     });
 
-    const response = await request(app.getHttpServer() as unknown as App)
-      .get('/auth/refresh')
-      .set('Authorization', `Bearer ${mockAccessToken}`);
+    it('should return an error when use case throws an exception', async () => {
+      const mockAccessToken = 'mockAccessToken';
 
-    expect(response.status).toBe(500);
-    expect(response.body.message).toBe('Internal server error');
-    expect(mockRefreshUseCase.execute).toHaveBeenCalledWith('mock-access-token');
+      mockRefreshUseCase.execute.mockImplementation(() => {
+        throw new Error('Internal server error');
+      });
+
+      const response = await request(app.getHttpServer() as unknown as App)
+        .get('/auth/refresh')
+        .set('Authorization', `Bearer ${mockAccessToken}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Internal server error');
+      expect(mockRefreshUseCase.execute).toHaveBeenCalledWith('mock-access-token');
+    });
   });
 });
