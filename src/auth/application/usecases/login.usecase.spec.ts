@@ -1,124 +1,137 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PG_USER_REPOSITORY, UserRepository } from '@auth/infrastructure/database/user.repository';
-import {
-  AccessTokenRepository,
-  PG_ACCESS_TOKEN_REPOSITORY,
-} from '@auth/infrastructure/database/access.token.repository';
-import {
-  CACHE_ACCESS_TOKEN_REPOSITORY,
-  CacheAccessTokenRepository,
-} from '@auth/infrastructure/database/cache.access.token.repository';
-
-import { DatabaseModule } from '@database/database.module';
-import { SignupUsecase } from '@auth/application/usecases/signup.usecase';
-import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
-import { PrismaService } from '@database/prisma.service';
-import { EncryptionService } from '../services/encryption.service';
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
-import { AccessToken, PrismaClient, User } from '@prisma/client';
-import { LoginUseCase } from '@auth/application/usecases/login.usecase';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'crypto';
-import { CacheModule } from '@nestjs/cache-manager';
+import { UnauthorizedException } from '@nestjs/common';
+import { LoginUseCase } from './login.usecase';
+import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
+import { EncryptionService } from '../services/encryption.service';
+import { AccessTokenDto } from './dtos/access-token.dto';
+import { AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
+import { create } from 'domain';
 
-export type MockContext = {
-  prisma: DeepMockProxy<PrismaClient>;
-};
+// filepath: src/auth/application/usecases/login.usecase.test.ts
 
-export const createMockContext = (): MockContext => {
-  return {
-    prisma: mockDeep<PrismaClient>({
-      user: {
-        create: jest.fn(),
-        findUnique: jest.fn(),
-        count: jest.fn(),
-      },
-      accessToken: {
-        create: jest.fn(),
-      },
-    }),
-  };
-};
-
-describe('AuthController', () => {
+describe('LoginUseCase', () => {
   let loginUseCase: LoginUseCase;
-  let mockContext: MockContext;
-  let encryptionService: EncryptionService;
-  let jwtService: JwtService;
+
+  let mockAuthRepository: any;
+  let mockAccessTokenRepository: any;
+  let mockEncryptionService: any;
 
   beforeEach(async () => {
-    mockContext = createMockContext();
+    mockAuthRepository = {
+      findByEmail: jest.fn(),
+    } as unknown as jest.Mocked<UserRepositoryPort>;
+
+    mockAccessTokenRepository = {
+      create: jest.fn(),
+    } as unknown as jest.Mocked<EncryptionService>;
+
+    mockEncryptionService = {
+      comparePassword: jest.fn(),
+    } as unknown as jest.Mocked<EncryptionService>;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        DatabaseModule,
-        CacheModule.register(),
         JwtModule.register({
-          secret: process.env.JWT_SECRET || 'WplAr8TYw6oCviNnOvFa',
-          signOptions: { expiresIn: '2h' },
+          secret: 'test-secret',
         }),
       ],
       providers: [
-        SignupValidation,
-        EncryptionService,
-        SignupUsecase,
-        LoginUseCase,
         {
-          provide: PG_USER_REPOSITORY,
-          useClass: UserRepository,
-        },
-        {
-          provide: PG_ACCESS_TOKEN_REPOSITORY,
-          useClass: AccessTokenRepository,
-        },
-        {
-          provide: CACHE_ACCESS_TOKEN_REPOSITORY,
-          useClass: CacheAccessTokenRepository,
-        },
-        {
-          provide: PrismaService,
-          useFactory: () => {
-            return mockContext.prisma;
+          provide: LoginUseCase,
+          useFactory: (
+            authRepository: UserRepositoryPort,
+            accessTokenRepository: AccessTokenRepositoryPort,
+            jwtService: JwtService,
+            encryptionService: EncryptionService,
+          ) => {
+            return new LoginUseCase(
+              authRepository,
+              accessTokenRepository,
+              jwtService,
+              encryptionService,
+            );
           },
+          inject: [
+            'UserRepositoryPort',
+            'AccessTokenRepositoryPort',
+            JwtService,
+            'EncryptionService',
+          ],
+        },
+        {
+          provide: 'UserRepositoryPort',
+          useValue: mockAuthRepository,
+        },
+        {
+          provide: 'AccessTokenRepositoryPort',
+          useValue: mockAccessTokenRepository,
+        },
+        {
+          provide: 'EncryptionService',
+          useValue: mockEncryptionService,
         },
       ],
     }).compile();
 
     loginUseCase = module.get<LoginUseCase>(LoginUseCase);
-    encryptionService = module.get<EncryptionService>(EncryptionService);
-    jwtService = module.get<JwtService>(JwtService);
   });
 
-  it('should be defined', () => {
-    expect(loginUseCase).toBeDefined();
-    expect(mockContext).toBeDefined();
-    expect(jwtService).toBeDefined();
+  it('should return an access token for valid credentials', async () => {
+    const mockUser = { id: '1', email: 'test@example.com', password: 'hashedPassword' };
+    const mockAccessToken: AccessTokenDto = {
+      token: 'mockAccessToken',
+      refresh: '',
+      expiresAt: undefined,
+    };
+    mockAccessTokenRepository.create.mockResolvedValueOnce(mockAccessToken);
+    mockAuthRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockEncryptionService.comparePassword.mockResolvedValueOnce(true);
+
+    const result = await loginUseCase.execute({ email: 'test@example.com', password: 'password' });
+
+    expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+    expect(mockEncryptionService.comparePassword).toHaveBeenCalledWith(
+      'password',
+      'hashedPassword',
+    );
+    expect(result).toHaveProperty('token');
+    expect(result).toHaveProperty('refresh');
+    expect(result).toHaveProperty('expiresAt');
   });
 
-  it('should login a user', async () => {
-    const user: User = {
-      id: 1,
-      email: 'testing@gmail.com',
-      name: 'Testing User',
-      password: await encryptionService.hashPassword(String('HolaMundo#1200')),
-      createdAt: new Date(),
-      updatedAt: null,
-    };
-    mockContext.prisma.user.findUnique.mockResolvedValue(user);
+  it('should throw UnauthorizedException for invalid password', async () => {
+    const mockUser = { id: '1', email: 'test@example.com', password: 'hashedPassword' };
 
-    const accessToken: AccessToken = {
-      id: randomUUID(),
-      userId: 1,
-      expiresAt: new Date(),
-      createdAt: new Date(),
-      refreshToken: null,
-    };
-    mockContext.prisma.accessToken.create.mockResolvedValue(accessToken);
+    mockAuthRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockEncryptionService.comparePassword.mockResolvedValueOnce(false);
 
-    const result = await loginUseCase.execute({
-      email: 'testing@gmail.com',
-      password: 'HolaMundo#1200',
-    });
+    await expect(
+      loginUseCase.execute({ email: 'test@example.com', password: 'wrongPassword' }),
+    ).rejects.toThrow(UnauthorizedException);
+    expect(mockEncryptionService.comparePassword).toHaveBeenCalledWith(
+      'wrongPassword',
+      'hashedPassword',
+    );
+    expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+  });
 
-    expect(result).toBeDefined();
+  it('should throw UnauthorizedException for non-existent user', async () => {
+    mockAuthRepository.findByEmail.mockResolvedValueOnce(null);
+
+    await expect(
+      loginUseCase.execute({ email: 'nonexistent@example.com', password: 'password' }),
+    ).rejects.toThrow(UnauthorizedException);
+
+    expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith('nonexistent@example.com');
+  });
+
+  it('should throw UnauthorizedException when email or password is missing', async () => {
+    await expect(loginUseCase.execute({ email: '', password: 'password' })).rejects.toThrow(
+      UnauthorizedException,
+    );
+    await expect(loginUseCase.execute({ email: 'test@example.com', password: '' })).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 });

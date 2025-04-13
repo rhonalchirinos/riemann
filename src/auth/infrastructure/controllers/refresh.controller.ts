@@ -1,5 +1,5 @@
 import { Controller, UseGuards, Request, Get } from '@nestjs/common';
-import { RefreshUseCase } from 'src/auth/application/usecases/refresh.token.usecase';
+import { RefreshUseCase } from 'src/auth/application/usecases/refresh-token.usecase';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { type AuthRequest } from 'src/shared/dto/request';
 
@@ -13,7 +13,8 @@ export class RefreshController {
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
   async refresh(@Request() req: AuthRequest): Promise<any> {
-    const data = await this.refreshTokenUseCase.execute(req.user.accessToken);
+    const token = req.user.accessToken;
+    const data = await this.refreshTokenUseCase.execute(token);
 
     return { data };
   }

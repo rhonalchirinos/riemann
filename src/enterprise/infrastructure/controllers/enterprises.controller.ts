@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { type EnterpriseCreateDto } from 'src/enterprise/application/dtos/enterprise.create.dto';
-import { EnterpriseCreateUseCase } from 'src/enterprise/application/enterprise.create.usecase';
-import { EnterpriseListUseCase } from 'src/enterprise/application/enterprise.list.usecase';
+import { EnterpriseCreateUseCase } from 'src/enterprise/application/enterprise-create.usecase';
+import { EnterpriseListUseCase } from 'src/enterprise/application/enterprise-list.usecase';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseValidation } from './dtos/enterprise.validation';
 

@@ -10,7 +10,7 @@ import {
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseInterceptor } from '../interceptor/enterprise.interceptor';
-import { InvitationDeleteUseCase } from 'src/enterprise/application/invitation.delete.usecase';
+import { InvitationDeleteUseCase } from 'src/enterprise/application/invitation-delete.usecase';
 
 @Controller('enterprises/:enterpriseId')
 @UseGuards(JwtAuthGuard)
@@ -21,15 +21,12 @@ export class InvitationController {
    */
   public constructor(private useCase: InvitationDeleteUseCase) {}
 
-  @Delete('/invitations/:invitationId')
+  @Delete('/invitations/:id')
   @HttpCode(204)
-  async destroy(
-    @Request() request: AuthRequest,
-    @Param('invitationId') invitationId: string,
-  ): Promise<any> {
+  async destroy(@Request() request: AuthRequest, @Param('id') id: string): Promise<any> {
     const enterprise = request.enterprise;
 
-    await this.useCase.execute(enterprise, invitationId);
+    await this.useCase.execute(enterprise, id);
 
     return;
   }

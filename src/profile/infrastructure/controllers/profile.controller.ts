@@ -1,5 +1,5 @@
 import { Controller, Post, UseGuards, Request, Get, UsePipes, Body } from '@nestjs/common';
-import { ProfileUsecase } from 'src/profile/application/usecases/profile.usecase';
+import { ProfileUsecase } from 'src/profile/application/usecases/profile-usecase';
 import { type ProfileDto } from 'src/profile/application/usecases/dtos/profile.dto';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';

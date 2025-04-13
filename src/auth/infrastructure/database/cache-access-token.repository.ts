@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AccessToken, Prisma } from '@prisma/client';
-import { type AccessTokenRepositoryPort } from '@auth/domain/repositories/access.token.repository';
+import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { PG_ACCESS_TOKEN_REPOSITORY } from './access.token.repository';
+import { PG_ACCESS_TOKEN_REPOSITORY } from './access-token.repository';
 
 @Injectable()
 export class CacheAccessTokenRepository implements AccessTokenRepositoryPort {

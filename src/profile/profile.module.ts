@@ -10,10 +10,10 @@ import {
   PG_PROFILE_INVITATION_REPOSITORY,
   ProfileInvitationRepository,
 } from './infrastructure/database/invitation.repository';
-import { ProfileInvitationUsecase } from './application/usecases/profile.invitations.usecase';
-import { ProfileUsecase } from './application/usecases/profile.usecase';
+import { ProfileInvitationUsecase } from './application/usecases/profile-invitations.usecase';
+import { ProfileUsecase } from './application/usecases/profile-usecase';
 import { AuthModule } from 'src/auth/auth.module';
-import { ProfileInvitationRepositoryPort } from './domain/rapositories/profile.invitation.repository';
+import { ProfileInvitationRepositoryPort } from './domain/rapositories/profile-invitation.repository';
 import { PG_USER_REPOSITORY } from 'src/auth/infrastructure/database/user.repository';
 import { UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
 import { InvitationController } from './infrastructure/controllers/invitation.controller';

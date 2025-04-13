@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { PG_USER_REPOSITORY } from '@auth/infrastructure/database/user.repository';
 import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository.d';
-import { type SignupUserDto } from './dtos/signupuser.dto';
 import { EncryptionService } from '@auth/application/services/encryption.service';
+
+import { type SignupUserDto } from './dtos/signup-user.dto';
 
 @Injectable()
 export class SignupUsecase {
   constructor(
-    @Inject(PG_USER_REPOSITORY)
     private authRepository: UserRepositoryPort,
     private encryptionService: EncryptionService,
   ) {}

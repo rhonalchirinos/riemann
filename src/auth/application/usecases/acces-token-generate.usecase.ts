@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
-import { AccessTokenDto } from './dtos/access.token.dto';
+import { AccessTokenDto } from './dtos/access-token.dto';
 import { JwtService } from '@nestjs/jwt';
-import { AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access.token.repository';
+import { AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
 import { DateTime } from 'luxon';
 import { User } from '@prisma/client';
 

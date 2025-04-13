@@ -1,116 +1,73 @@
-import { Test, TestingModule } from '@nestjs/testing';
-
-import { BadRequestException } from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { LoginValidation } from './login.validations';
+import { type LoginDto } from '@auth/application/usecases/dtos/login.dto';
 
-describe('AuthController', () => {
+describe('LoginValidation', () => {
   let loginValidation: LoginValidation;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [],
-      controllers: [],
-      providers: [LoginValidation],
-    }).compile();
-
-    loginValidation = module.get<LoginValidation>(LoginValidation);
+  beforeEach(() => {
+    loginValidation = new LoginValidation();
   });
 
-  it('should be defined', () => {
-    expect(loginValidation).toBeDefined();
+  it('should validate and return the transformed data for valid input', async () => {
+    const validInput: LoginDto = {
+      email: 'user@example.com',
+      password: 'securePassword123',
+    };
+
+    const result = await loginValidation.transform(validInput);
+
+    expect(result).toEqual(validInput);
   });
 
-  describe('Validate login input', () => {
-    it('verify if email and password is valid', async () => {
-      expect.assertions(2);
-      try {
-        await loginValidation.transform({
-          email: undefined,
-          password: undefined,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.getResponse()).toEqual(
-          expect.objectContaining({
-            statusCode: 400,
-            message: [
-              {
-                code: 'invalid_type',
-                expected: 'string',
-                message: 'Required',
-                path: ['email'],
-                received: 'undefined',
-              },
-              {
-                code: 'invalid_type',
-                expected: 'string',
-                message: 'Required',
-                path: ['password'],
-                received: 'undefined',
-              },
-            ],
+  it('should throw UnprocessableEntityException for invalid email format', async () => {
+    const invalidInput: LoginDto = {
+      email: 'invalid-email',
+      password: 'securePassword123',
+    };
 
-            error: 'Bad Request',
-          }),
-        );
-      }
-    });
+    await expect(loginValidation.transform(invalidInput)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
 
-    it('verify email if valid', async () => {
-      expect.assertions(2);
-      try {
-        await loginValidation.transform({
-          email: 'testing',
-          password: 'HolaMundo#1200',
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.getResponse()).toEqual(
-          expect.objectContaining({
-            statusCode: 400,
-            message: [
-              {
-                code: 'invalid_string',
-                message: 'Invalid email format',
-                path: ['email'],
-                validation: 'email',
-              },
-            ],
-            error: 'Bad Request',
-          }),
-        );
-      }
-    });
+  it('should throw UnprocessableEntityException for missing password', async () => {
+    const invalidInput: Partial<LoginDto> = {
+      email: 'user@example.com',
+    };
 
-    it('verify email and password valid', async () => {
-      expect.assertions(2);
-      try {
-        await loginValidation.transform({});
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.getResponse()).toEqual(
-          expect.objectContaining({
-            message: [
-              {
-                code: 'invalid_type',
-                expected: 'string',
-                received: 'undefined',
-                path: ['email'],
-                message: 'Required',
-              },
-              {
-                code: 'invalid_type',
-                expected: 'string',
-                received: 'undefined',
-                path: ['password'],
-                message: 'Required',
-              },
-            ],
-            error: 'Bad Request',
-            statusCode: 400,
-          }),
-        );
-      }
-    });
+    await expect(loginValidation.transform(invalidInput as LoginDto)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
+
+  it('should throw UnprocessableEntityException for empty input', async () => {
+    const invalidInput = {};
+
+    await expect(loginValidation.transform(invalidInput as LoginDto)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
+
+  it('should throw UnprocessableEntityException for empty email', async () => {
+    const invalidInput: LoginDto = {
+      email: '',
+      password: 'securePassword123',
+    };
+
+    await expect(loginValidation.transform(invalidInput)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
+
+  it('should throw UnprocessableEntityException for empty password', async () => {
+    const invalidInput: LoginDto = {
+      email: 'user@example.com',
+      password: '',
+    };
+
+    await expect(loginValidation.transform(invalidInput)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
   });
 });

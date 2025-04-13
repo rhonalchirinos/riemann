@@ -1,13 +1,11 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { PG_USER_REPOSITORY } from '@auth/infrastructure/database/user.repository';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
-import { type AccessTokenRepositoryPort } from '@auth/domain/repositories/access.token.repository';
+import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
 import { type LoginDto } from './dtos/login.dto';
 import { EncryptionService } from '../services/encryption.service';
 import { JwtService } from '@nestjs/jwt';
-import { AccessTokenDto } from './dtos/access.token.dto';
-import { CACHE_ACCESS_TOKEN_REPOSITORY } from '@auth/infrastructure/database/cache.access.token.repository';
-import { AccessTokenGenerateUseCase } from './accestoken.generate.usecase';
+import { AccessTokenDto } from './dtos/access-token.dto';
+import { AccessTokenGenerateUseCase } from './acces-token-generate.usecase';
 
 @Injectable()
 export class LoginUseCase extends AccessTokenGenerateUseCase {
@@ -15,12 +13,8 @@ export class LoginUseCase extends AccessTokenGenerateUseCase {
   private encryptionService: EncryptionService;
 
   constructor(
-    @Inject(PG_USER_REPOSITORY)
     authRepository: UserRepositoryPort,
-
-    @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
     accessTokenRepository: AccessTokenRepositoryPort,
-
     jwtService: JwtService,
     encryptionService: EncryptionService,
   ) {

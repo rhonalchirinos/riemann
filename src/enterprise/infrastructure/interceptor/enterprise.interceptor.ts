@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Enterprise } from '@prisma/client';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 import { type AuthRequest } from 'src/shared/dto/request';
@@ -31,9 +31,6 @@ export class EnterpriseInterceptor implements NestInterceptor {
   ) {}
 
   async intercept(context?: ExecutionContext, next?: CallHandler): Promise<Observable<any>> {
-    // console.log('Before...');
-    const now = Date.now();
-
     const { enterpriseId } = this.request.params;
     const { user } = this.request;
 
@@ -50,11 +47,7 @@ export class EnterpriseInterceptor implements NestInterceptor {
       throw new HttpException('Not found Action', HttpStatus.NOT_FOUND);
     }
 
-    return next.handle().pipe(
-      tap(() => {
-        /// console.log(`After... ${Date.now() - now}ms`);
-      }),
-    );
+    return next.handle();
   }
 
   /**

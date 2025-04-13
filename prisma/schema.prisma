@@ -31,6 +31,8 @@ model User {
   accessTokens AccessToken[]
   entreprises  Enterprise[]
   employees    Employee[]
+
+  @@map("users")
 }
 
 model AccessToken {
@@ -42,6 +44,8 @@ model AccessToken {
   user   User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@map("access_tokens")
 }
 
 model Enterprise {
@@ -58,6 +62,8 @@ model Enterprise {
 
   employees   Employee[]
   invitations Invitation[]
+
+  @@map("enterprises")
 }
 
 model Employee {
@@ -72,6 +78,8 @@ model Employee {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt()
+
+  @@map("employees")
 }
 
 model Invitation {
@@ -88,4 +96,6 @@ model Invitation {
   updatedAt  DateTime? @updatedAt()
   acceptedAt DateTime?
   rejectedAt DateTime?
+
+  @@map("invitations")
 }

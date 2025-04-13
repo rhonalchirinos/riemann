@@ -1,15 +1,15 @@
 import { Module, Scope } from '@nestjs/common';
 import { DatabaseModule } from 'src/database/database.module';
-import { EnterpriseListUseCase } from './application/enterprise.list.usecase';
+import { EnterpriseListUseCase } from './application/enterprise-list.usecase';
 import {
   EnterpriseRepository,
   PG_ENTERPRISE_REPOSITORY,
 } from './infrastructure/databases/entreprise.repository';
-import { EnterpriseCreateUseCase } from './application/enterprise.create.usecase';
+import { EnterpriseCreateUseCase } from './application/enterprise-create.usecase';
 
-import { EnterpriseDeleteUseCase } from './application/enterprise.delete.usecase';
-import { EnterpriseShowUseCase } from './application/enterprise.show.usecase';
-import { EnterpriseUpdateUseCase } from './application/enterprise.update.usecase';
+import { EnterpriseDeleteUseCase } from './application/enterprise-delete.usecase';
+import { EnterpriseShowUseCase } from './application/enterprise-show.usecase';
+import { EnterpriseUpdateUseCase } from './application/enterprise-update.usecase';
 import { type EnterpriseRepositoryPort } from './domain/enterprise.repository';
 import {
   InvitationRepository,
@@ -17,9 +17,9 @@ import {
 } from './infrastructure/databases/invitation.repository';
 import { InvitationsController } from './infrastructure/controllers/invitations.controller';
 import { InvitationController } from './infrastructure/controllers/invitation.controller';
-import { InvitationListUseCase } from './application/invitation.list.usecase';
-import { InvitationDeleteUseCase } from './application/invitation.delete.usecase';
-import { InvitationInviteUseCase } from './application/invitation.invite.usecase';
+import { InvitationListUseCase } from './application/invitation-list.usecase';
+import { InvitationDeleteUseCase } from './application/invitation-delete.usecase';
+import { InvitationInviteUseCase } from './application/invitation-invite.usecase';
 import { type InvitationRepositoryPort } from './domain/invitation.repository';
 import { EnterpriseInterceptor } from './infrastructure/interceptor/enterprise.interceptor';
 import { Cache, CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';

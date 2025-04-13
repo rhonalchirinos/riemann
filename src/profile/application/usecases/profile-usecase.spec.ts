@@ -8,7 +8,7 @@ import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '../../../auth/application/services/encryption.service';
 
 import { User } from '@prisma/client';
-import { ProfileUsecase } from './profile.usecase';
+import { ProfileUsecase } from './profile-usecase';
 
 describe('AuthController', () => {
   let profileUsecase: ProfileUsecase;

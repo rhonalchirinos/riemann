@@ -97,3 +97,25 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+
+
+
+
+Testing 
+
+Controller tests 
+
+Your controller's job is to delegate work — not to process logic itself. So your controller tests should focus on:
+
+Input/output
+
+Validation
+
+Routing
+
+HTTP status codes
+
+Making sure the use case is called with the correct arguments
+

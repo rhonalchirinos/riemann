@@ -1,7 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InvitationStatus, User } from '@prisma/client';
 import { type UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
-import { type ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile.invitation.repository';
+import { type ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile-invitation.repository';
 
 @Injectable()
 export class ProfileInvitationUsecase {

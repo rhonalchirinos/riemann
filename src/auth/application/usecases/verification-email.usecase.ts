@@ -1,9 +1,7 @@
-import { Inject } from '@nestjs/common';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 
 import { type UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
-import { PG_USER_REPOSITORY } from 'src/auth/infrastructure/database/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { type User } from '@prisma/client';
 
@@ -15,11 +13,8 @@ export class VerificationEmailUseCase {
   private readonly TTL = 3600 * 1000;
 
   constructor(
-    @Inject(PG_USER_REPOSITORY)
     protected userRepository: UserRepositoryPort,
-
-    @Inject(CACHE_MANAGER) private cache: Cache,
-
+    private cache: Cache,
     private mail: MailerService,
     protected jwtService: JwtService,
   ) {}
@@ -63,9 +58,11 @@ export class VerificationEmailUseCase {
    */
   public async verifyUser(userId: string): Promise<void> {
     const user = await this.userRepository.findById(parseInt(userId));
+
     if (!user) {
       throw new Error('User not found');
     }
+
     if (!user.emailVerified) {
       await this.userRepository.update(user.id, { emailVerified: true });
     }

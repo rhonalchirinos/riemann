@@ -1,16 +1,14 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { type AccessTokenRepositoryPort } from '@auth/domain/repositories/access.token.repository';
-import { CACHE_ACCESS_TOKEN_REPOSITORY } from '@auth/infrastructure/database/cache.access.token.repository';
+import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     config: ConfigService,
-    @Inject(CACHE_ACCESS_TOKEN_REPOSITORY)
     private accessTokenRepository: AccessTokenRepositoryPort,
   ) {
     super({

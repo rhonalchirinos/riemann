@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 import { type AuthRequest } from 'src/shared/dto/request';
-import { ProfileInvitationUsecase } from 'src/profile/application/usecases/profile.invitations.usecase';
+import { ProfileInvitationUsecase } from 'src/profile/application/usecases/profile-invitations.usecase';
 
 @Controller('auth/profile/invitations')
 @UseGuards(JwtAuthGuard)

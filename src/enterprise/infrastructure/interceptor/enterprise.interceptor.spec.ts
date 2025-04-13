@@ -4,9 +4,9 @@ import { HttpException, ExecutionContext, CallHandler } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { EnterpriseInterceptor } from './enterprise.interceptor';
 import { PG_ENTERPRISE_REPOSITORY } from '../databases/entreprise.repository';
-import { firstValueFrom, of } from 'rxjs';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { Employee } from '@prisma/client';
+import { of } from 'rxjs';
 
 describe('EnterpriseInterceptor', () => {
   let interceptor: EnterpriseInterceptor;
@@ -30,7 +30,6 @@ describe('EnterpriseInterceptor', () => {
     id: 'employee-123',
     userId: '456',
     enterpriseId: 'enterprise-123',
-    // Add other employee properties as needed
   };
 
   beforeEach(async () => {

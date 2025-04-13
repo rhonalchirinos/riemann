@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { ZodSchema } from 'zod';
 import { type LoginDto } from '@auth/application/usecases/dtos/login.dto';
 
@@ -15,7 +15,7 @@ export class LoginValidation implements PipeTransform<LoginDto> {
     const result = await this.schema.safeParseAsync(value);
     if (!result.success) {
       const message = result.error.issues;
-      throw new BadRequestException(message);
+      throw new UnprocessableEntityException(message);
     }
 
     return result.data;

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
-import { InvitationListUseCase } from 'src/enterprise/application/invitation.list.usecase';
+import { InvitationListUseCase } from 'src/enterprise/application/invitation-list.usecase';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseInterceptor } from '../interceptor/enterprise.interceptor';
-import { InvitationInviteUseCase } from 'src/enterprise/application/invitation.invite.usecase';
+import { InvitationInviteUseCase } from 'src/enterprise/application/invitation-invite.usecase';
 import { InvitationDto } from 'src/enterprise/application/dtos/invitation.dto';
 
 @Controller('enterprises/:enterpriseId')

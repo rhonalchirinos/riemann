@@ -2,14 +2,14 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvitationController } from './invitation.controller';
-import { ProfileInvitationUsecase } from 'src/profile/application/usecases/profile.invitations.usecase';
+import { ProfileInvitationUsecase } from 'src/profile/application/usecases/profile-invitations.usecase';
 import { AuthRequest } from 'src/shared/dto/request';
 import {
   PG_PROFILE_INVITATION_REPOSITORY,
   ProfileInvitationRepository,
 } from '../database/invitation.repository';
 import { PrismaService } from 'src/database/prisma.service';
-import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile.invitation.repository';
+import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile-invitation.repository';
 import { UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
 import {
   PG_USER_REPOSITORY,

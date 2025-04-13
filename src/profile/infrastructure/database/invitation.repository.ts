@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Employee, Invitation, InvitationStatus } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
-import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile.invitation.repository';
+import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile-invitation.repository';
 import { type InvitationWithEnterprise } from 'src/profile/domain/invitation';
 
 @Injectable()

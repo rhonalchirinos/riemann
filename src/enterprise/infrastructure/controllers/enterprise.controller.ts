@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Put, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
-import { EnterpriseDeleteUseCase } from 'src/enterprise/application/enterprise.delete.usecase';
-import { type AuthRequest } from 'src/shared/dto/request';
+import { EnterpriseDeleteUseCase } from 'src/enterprise/application/enterprise-delete.usecase';
 import { EnterpriseValidation } from './dtos/enterprise.validation';
+import { EnterpriseShowUseCase } from 'src/enterprise/application/enterprise-show.usecase';
+import { EnterpriseUpdateUseCase } from 'src/enterprise/application/enterprise-update.usecase';
+
+import { type AuthRequest } from 'src/shared/dto/request';
 import { type EnterpriseCreateDto } from 'src/enterprise/application/dtos/enterprise.create.dto';
-import { EnterpriseShowUseCase } from 'src/enterprise/application/enterprise.show.usecase';
-import { EnterpriseUpdateUseCase } from 'src/enterprise/application/enterprise.update.usecase';
 
 @Controller('enterprises')
 @UseGuards(JwtAuthGuard)

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseModule } from '@database/database.module';
 import { PrismaService } from '@database/prisma.service';
-import { EnterpriseCreateUseCase } from './enterprise.create.usecase';
+import { EnterpriseCreateUseCase } from './enterprise-create.usecase';
 import {
   EnterpriseRepository,
   PG_ENTERPRISE_REPOSITORY,

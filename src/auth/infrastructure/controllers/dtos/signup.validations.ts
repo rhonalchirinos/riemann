@@ -1,9 +1,10 @@
-import { z } from 'zod';
-import type { UserRepositoryPort } from '@auth/domain/repositories/user.repository';
-import { PipeTransform, Injectable, BadRequestException, Inject } from '@nestjs/common';
+import { PipeTransform, Injectable, Inject, UnprocessableEntityException } from '@nestjs/common';
 import { ZodSchema } from 'zod';
+import { z } from 'zod';
+
 import { PG_USER_REPOSITORY } from '@auth/infrastructure/database/user.repository';
-import { type SignupUserDto } from '@auth/application/usecases/dtos/signupuser.dto';
+import { type SignupUserDto } from '@auth/application/usecases/dtos/signup-user.dto';
+import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
 
 @Injectable()
 export class SignupValidation implements PipeTransform<SignupUserDto> {
@@ -20,7 +21,7 @@ export class SignupValidation implements PipeTransform<SignupUserDto> {
     const result = await this.schema.safeParseAsync(value);
     if (!result.success) {
       const message = result.error.issues;
-      throw new BadRequestException(message);
+      throw new UnprocessableEntityException(message);
     }
 
     return result.data;

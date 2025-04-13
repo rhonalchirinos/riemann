@@ -8,7 +8,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { VerificationEmailUseCase } from 'src/auth/application/usecases/verification.email.usecase';
+import { VerificationEmailUseCase } from 'src/auth/application/usecases/verification-email.usecase';
 import { JwtVerifyGuard } from '../guards/jwt-verify.guard';
 
 @Controller('auth')
