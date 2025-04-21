@@ -65,6 +65,7 @@ describe('VerifyController (e2e)', () => {
     });
 
     it('should fail if JWT is missing', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       mockJwtVerifyGuard.canActivate = jest.fn((context: ExecutionContext) => {
         return false;
       });

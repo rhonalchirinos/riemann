@@ -62,6 +62,7 @@ describe('LogoutController (e2e)', () => {
     });
 
     it('should return 401 if JwtAuthGuard denies access', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       mockJwtAuthGuard.canActivate.mockImplementation((context: ExecutionContext) => {
         throw new UnauthorizedException();
       });

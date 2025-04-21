@@ -1,6 +1,5 @@
-import { Controller, UseGuards, Request, Get } from '@nestjs/common';
+import { Controller, UseGuards, Get } from '@nestjs/common';
 import { ProfileUsecase } from 'src/profile/application/usecases/profile.usecase';
-import { type AuthRequest } from 'src/shared/dto/request';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
 
 @Controller('auth/profile/notifications')
@@ -12,5 +11,5 @@ export class NotificationController {
   public constructor(private profileUseCase: ProfileUsecase) {}
 
   @Get()
-  async notifications(@Request() req: AuthRequest): Promise<any> {}
+  async notifications(): Promise<any> {}
 }

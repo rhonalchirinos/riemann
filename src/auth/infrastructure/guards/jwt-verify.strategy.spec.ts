@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { UnprocessableEntityException, HttpStatus } from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { JwtVerifyStrategy } from './jwt-verify.strategy';
 
 describe('JwtVerifyStrategy', () => {

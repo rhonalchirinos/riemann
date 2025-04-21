@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { EncryptionService } from '@auth/application/services/encryption.service';
-import { Cache, CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 import { ProfileValidation } from './infrastructure/controllers/dtos/profile.validations';
 import { ProfileController } from './infrastructure/controllers/profile.controller';

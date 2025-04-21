@@ -21,7 +21,7 @@ import { InvitationDeleteUseCase } from './application/invitation-delete.usecase
 import { InvitationInviteUseCase } from './application/invitation-invite.usecase';
 import { type InvitationRepositoryPort } from './domain/invitation.repository';
 import { EnterpriseInterceptor } from './infrastructure/interceptor/enterprise.interceptor';
-import { Cache, CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { REQUEST } from '@nestjs/core';
 import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseController } from './infrastructure/controllers/enterprise.controller';

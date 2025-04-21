@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InvitationController } from './invitation.controller';
 import { ProfileInvitationUsecase } from 'src/profile/application/usecases/profile-invitations.usecase';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
+import { AuthRequest } from 'src/shared/dto/request';
 
 describe('InvitationController', () => {
   let controller: InvitationController;
@@ -49,7 +50,7 @@ describe('InvitationController', () => {
 
   describe('invitations', () => {
     it('should return a list of invitations', async () => {
-      const req = { user: { userId: '1' } } as any;
+      const req: AuthRequest = { user: { userId: '1' } } as AuthRequest;
       const result = await controller.invitations(req);
 
       expect(mockInvitationUsecase.invitations).toHaveBeenCalledWith(1);
@@ -74,7 +75,7 @@ describe('InvitationController', () => {
 
   describe('accept', () => {
     it('should accept an invitation', async () => {
-      const req = { user: { userId: '1' } } as any;
+      const req: AuthRequest = { user: { userId: '1' } } as any;
       const id = '1';
 
       await controller.accept(req, id);
@@ -85,7 +86,7 @@ describe('InvitationController', () => {
 
   describe('reject', () => {
     it('should reject an invitation', async () => {
-      const req = { user: { userId: '1' } } as any;
+      const req: AuthRequest = { user: { userId: '1' } } as any;
       const id = '1';
 
       await controller.reject(req, id);

@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProfileController } from './profile.controller';
 import { ProfileUsecase } from 'src/profile/application/usecases/profile.usecase';
 import { JwtAuthGuard } from 'src/auth/infrastructure/guards/jwt-auth.guard';
+import { AuthRequest } from 'src/shared/dto/request';
+import { ProfileDto } from 'src/profile/application/usecases/dtos/profile.dto';
 
 describe('ProfileController', () => {
   let controller: ProfileController;
@@ -61,7 +63,7 @@ describe('ProfileController', () => {
 
   describe('profile', () => {
     it('should return user profile data', async () => {
-      const req = { user: { userId: '1' } } as any;
+      const req: AuthRequest = { user: { userId: '1' } } as any;
       const result = await controller.profile(req);
 
       expect(mockProfileUsecase.profile).toHaveBeenCalledWith(1);
@@ -86,8 +88,8 @@ describe('ProfileController', () => {
 
   describe('profileUpdate', () => {
     it('should update and return user profile data', async () => {
-      const req = { user: { userId: '1' } } as any;
-      const profileDto = { name: 'Updated User', email: 'updated@example.com' } as any;
+      const req: AuthRequest = { user: { userId: '1' } } as any;
+      const profileDto: ProfileDto = { name: 'Updated User', email: 'updated@example.com' } as any;
       const result = await controller.profileUpdate(req, profileDto);
 
       expect(mockProfileUsecase.updateProfile).toHaveBeenCalledWith(1, profileDto);
