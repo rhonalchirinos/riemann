@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
-import { PrismaService } from '@database/prisma.service';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
@@ -16,11 +16,10 @@ export class UserRepository implements UserRepositoryPort {
    *
    * @returns
    */
-  async findById(id: number): Promise<User | null> {
+  async findById(id: number, optional?: any): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
-      where: {
-        id: id,
-      },
+      include: optional?.include,
+      where: { id },
     });
 
     return user;

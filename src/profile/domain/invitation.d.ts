@@ -1,3 +1,5 @@
-export type InvitationWithEnterprise = Prisma.InvitationGetPayload<{
-  include: { enterprise: true };
-}>;
+import { Enterprise, Invitation } from '@prisma/client';
+
+export type InvitationWithEnterprise = Invitation & {
+  enterprise: Enterprise;
+};

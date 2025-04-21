@@ -9,16 +9,14 @@ import {
 import {
   CACHE_ACCESS_TOKEN_REPOSITORY,
   CacheAccessTokenRepository,
-} from 'src/auth/infrastructure/database/cache-access-token.repository';
+} from 'src/auth/infrastructure/cache/cache-access-token.repository';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
-import { DatabaseModule } from 'src/database/database.module';
 import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
 import { EncryptionService } from '@auth/application/services/encryption.service';
-import { JwtStrategy } from '@auth/infrastructure/guards/jwt.strategy';
+import { JwtStrategy } from 'src/auth/infrastructure/guards/jwt-strategy';
 import { LoginUseCase } from 'src/auth/application/usecases/login.usecase';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { CacheModule } from '@nestjs/cache-manager';
+import { JwtService } from '@nestjs/jwt';
 import { RefreshUseCase } from './application/usecases/refresh-token.usecase';
 
 import { JwtRefreshStrategy } from './infrastructure/guards/jwt-refresh.strategy';
@@ -26,7 +24,6 @@ import { LoginController } from './infrastructure/controllers/login.controller';
 import { SignupController } from './infrastructure/controllers/signup.controller';
 import { LoginValidation } from './infrastructure/controllers/dtos/login.validations';
 import { ConfigService } from '@nestjs/config';
-import { MyConfigModule } from 'src/config/config.module';
 import { VerificationEmailUseCase } from './application/usecases/verification-email.usecase';
 import { VerifyController } from './infrastructure/controllers/verify.controller';
 import { JwtVerifyStrategy } from './infrastructure/guards/jwt-verify.strategy';
@@ -36,18 +33,6 @@ import { UserRepositoryPort } from './domain/repositories/user.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Module({
-  imports: [
-    DatabaseModule,
-    CacheModule.register({ ttl: 60, max: 1000 }),
-    JwtModule.registerAsync({
-      imports: [MyConfigModule],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('jwt.secret', 'FynVfpT19fKeEvCS'),
-        signOptions: { expiresIn: '1h' },
-      }),
-      inject: [ConfigService],
-    }),
-  ],
   controllers: [
     LoginController,
     LogoutController,

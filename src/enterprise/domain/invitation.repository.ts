@@ -1,12 +1,6 @@
 import { Invitation, Prisma } from '@prisma/client';
 
-/**
- *
- */
 export interface InvitationRepositoryPort {
-  /**
-   * @param enterpriseId
-   */
   findAll(enterpriseId: string): Promise<Invitation[]>;
 
   invite(value: Prisma.InvitationCreateInput): Promise<Invitation>;

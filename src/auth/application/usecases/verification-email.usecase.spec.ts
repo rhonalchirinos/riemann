@@ -65,9 +65,7 @@ describe('VerificationEmailUseCase', () => {
 
       mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
       mockMailContext.sendMail.mockResolvedValueOnce({});
-
       await verificationEmail.execute(mockUser.email);
-
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(mockUser.email);
       expect(mockMailContext.sendMail).toHaveBeenCalledWith({
         to: mockUser.email,
@@ -78,38 +76,38 @@ describe('VerificationEmailUseCase', () => {
           token: expect.any(String),
         },
       });
+    });
 
-      it('should throw an error if the user does not exist', async () => {
-        mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    it('should throw an error if the user does not exist', async () => {
+      mockUserRepository.findByEmail.mockResolvedValueOnce(null);
 
-        await verificationEmail.execute('nonexistent@example.com');
+      await verificationEmail.execute('nonexistent@example.com');
 
-        expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('nonexistent@example.com');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('nonexistent@example.com');
 
-        expect(mockMailContext.sendMail).not.toHaveBeenCalledWith({});
+      expect(mockMailContext.sendMail).not.toHaveBeenCalledWith({});
+    });
+
+    it('should handle errors during email sending', async () => {
+      jest.clearAllMocks();
+
+      const mockUser = {
+        id: 'mock-user-id',
+        email: 'test@example.com',
+        name: 'Test User',
+      };
+
+      mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
+      mockMailContext.sendMail.mockImplementation(() => {
+        throw new Error('Email service error');
       });
 
-      it('should handle errors during email sending', async () => {
-        jest.clearAllMocks();
+      await expect(verificationEmail.execute(mockUser.email)).rejects.toThrow(
+        'Email service error',
+      );
 
-        const mockUser = {
-          id: 'mock-user-id',
-          email: 'test@example.com',
-          name: 'Test User',
-        };
-
-        mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
-        mockMailContext.sendMail.mockImplementation(() => {
-          throw new Error('Email service error');
-        });
-
-        await expect(verificationEmail.execute(mockUser.email)).rejects.toThrow(
-          'Email service error',
-        );
-
-        expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
-        expect(mockMailContext.sendMail).toHaveBeenCalled();
-      });
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(mockMailContext.sendMail).toHaveBeenCalled();
     });
 
     describe('verify user', () => {

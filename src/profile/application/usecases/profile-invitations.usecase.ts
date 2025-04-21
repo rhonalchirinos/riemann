@@ -1,5 +1,6 @@
+import { Cache } from '@nestjs/cache-manager';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { InvitationStatus, User } from '@prisma/client';
+import { Enterprise, Invitation, InvitationStatus, User } from '@prisma/client';
 import { type UserRepositoryPort } from 'src/auth/domain/repositories/user.repository';
 import { type ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile-invitation.repository';
 
@@ -8,29 +9,14 @@ export class ProfileInvitationUsecase {
   constructor(
     private readonly invitationRepository: ProfileInvitationRepositoryPort,
     private readonly userRepository: UserRepositoryPort,
+    private readonly cache: Cache,
   ) {}
 
-  async invitations(userId: number): Promise<any> {
-    const user = await this.userRepository.findById(userId);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  async invitations(userId: number): Promise<(Invitation & { enterprise: Enterprise })[]> {
+    const user = await this.user(userId);
     const items = await this.invitationRepository.findAll(user.email);
 
-    return items.map((item) => ({
-      id: item.id,
-      name: item.name,
-      email: item.email,
-      token: item.token,
-      status: item.status,
-      enterprise: {
-        slug: item.enterprise.slug,
-        name: item.enterprise.name,
-        description: item.enterprise.description,
-      },
-    }));
+    return items as (Invitation & { enterprise: Enterprise })[];
   }
 
   /**
@@ -55,9 +41,8 @@ export class ProfileInvitationUsecase {
       throw new NotFoundException('Invitation does not belongs you');
     }
 
-    await this.invitationRepository.accept(invitation);
-
-    await this.invitationRepository.addEmployee(invitation.enterpriseId, user.id);
+    await this.invitationRepository.accept(invitation, user.id);
+    await this.cache.del(`profile:${user.id}`);
   }
 
   /**
@@ -79,7 +64,7 @@ export class ProfileInvitationUsecase {
     }
 
     if (invitation.email !== user.email) {
-      throw new NotFoundException('Invitation does not belongs you');
+      throw new NotFoundException('Invitation does not belong to you');
     }
 
     await this.invitationRepository.reject(invitation);

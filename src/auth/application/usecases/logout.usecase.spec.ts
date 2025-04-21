@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseModule } from '@database/database.module';
 import { LogoutUsecase } from './logout.usecase';
 import { AccessToken } from '@prisma/client';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -12,14 +11,14 @@ describe('AuthController', () => {
   beforeEach(async () => {
     mockContext = {
       delete: jest.fn(),
-    } as unknown as AccessTokenRepositoryPort;
+    };
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, CacheModule.register({ ttl: 60, max: 1000 })],
+      imports: [CacheModule.register({ ttl: 60, max: 1000 })],
       providers: [
         {
           provide: LogoutUsecase,
-          useFactory: () => new LogoutUsecase(mockContext),
+          useFactory: () => new LogoutUsecase(mockContext as unknown as AccessTokenRepositoryPort),
         },
       ],
     }).compile();

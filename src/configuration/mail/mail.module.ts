@@ -3,13 +3,11 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { MyConfigModule } from 'src/config/config.module';
 
 @Global()
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      imports: [MyConfigModule],
       useFactory: (config: ConfigService) => ({
         transport: {
           host: config.get('mail.host'),
@@ -24,7 +22,7 @@ import { MyConfigModule } from 'src/config/config.module';
           from: `"No Reply" <${config.get('mail.fromAddress')}>`,
         },
         template: {
-          dir: join(__dirname, 'templates'),
+          dir: join(__dirname, '..', '..', '..', 'resources', 'templates'),
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
@@ -35,4 +33,4 @@ import { MyConfigModule } from 'src/config/config.module';
     }),
   ],
 })
-export class MailModule {}
+export class CustomMailModule {}

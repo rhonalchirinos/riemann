@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -17,9 +17,9 @@ export class JwtVerifyStrategy extends PassportStrategy(Strategy, 'jwt-verify') 
    * @param payload
    * @returns
    */
-  validate(payload: { sub: string }): any {
-    if (!payload.sub) {
-      throw new HttpException('Invalid', HttpStatus.UNPROCESSABLE_ENTITY);
+  validate(payload): any {
+    if (!payload?.sub) {
+      throw new UnprocessableEntityException('Invalid');
     }
 
     return { sub: payload.sub };

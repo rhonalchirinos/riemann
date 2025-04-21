@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Employee, Enterprise, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 
 @Injectable()
 export class EnterpriseRepository implements EnterpriseRepositoryPort {
-  /**
-   *
-   */
   constructor(private prisma: PrismaService) {}
 
   /**
@@ -28,17 +25,25 @@ export class EnterpriseRepository implements EnterpriseRepositoryPort {
    * @returns
    */
   async create(value: Prisma.EnterpriseCreateInput): Promise<Enterprise> {
-    const entreprise = await this.prisma.enterprise.create({
-      data: {
-        id: value.id,
-        name: value.name,
-        slug: this.sanitizeSlug(value.slug),
-        description: value.description,
-        owner: value.owner,
-      },
-    });
+    return await this.prisma.$transaction(async (prisma: PrismaService) => {
+      const enterprise = await prisma.enterprise.create({
+        data: {
+          id: value.id,
+          name: value.name,
+          slug: this.sanitizeSlug(value.slug),
+          description: value.description,
+          owner: value.owner,
+          employees: {
+            create: {
+              user: value.owner,
+              position: 'owner',
+            },
+          },
+        },
+      });
 
-    return entreprise;
+      return enterprise;
+    });
   }
 
   /**

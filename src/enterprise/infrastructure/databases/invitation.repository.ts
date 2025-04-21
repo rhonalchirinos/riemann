@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Invitation, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 import { type InvitationRepositoryPort } from 'src/enterprise/domain/invitation.repository';
 
 @Injectable()

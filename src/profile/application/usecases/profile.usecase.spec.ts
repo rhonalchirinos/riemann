@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PG_USER_REPOSITORY, UserRepository } from '@auth/infrastructure/database/user.repository';
-import { DatabaseModule } from '@database/database.module';
 
 import { SignupValidation } from '@auth/infrastructure/controllers/dtos/signup.validations';
 
-import { PrismaService } from '@database/prisma.service';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 import { EncryptionService } from '../../../auth/application/services/encryption.service';
 
 import { User } from '@prisma/client';
-import { ProfileUsecase } from './profile-usecase';
+import { ProfileUsecase } from './profile.usecase';
 
 describe('AuthController', () => {
   let profileUsecase: ProfileUsecase;
@@ -20,7 +19,6 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
       providers: [
         SignupValidation,
         EncryptionService,
@@ -52,7 +50,7 @@ describe('AuthController', () => {
     };
     mockContext.user.findUnique.mockResolvedValue(user);
 
-    const result = await profileUsecase.execute(1);
+    const result = await profileUsecase.profile(1);
     expect(result).toBeDefined();
   });
 
@@ -60,7 +58,7 @@ describe('AuthController', () => {
     expect(profileUsecase).toBeDefined();
     expect.assertions(1);
     try {
-      await profileUsecase.execute(1);
+      await profileUsecase.profile(1);
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }

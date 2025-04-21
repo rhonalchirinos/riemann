@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Employee, Invitation, InvitationStatus } from '@prisma/client';
-import { PrismaService } from '@database/prisma.service';
+import { Invitation, InvitationStatus } from '@prisma/client';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 import { ProfileInvitationRepositoryPort } from 'src/profile/domain/rapositories/profile-invitation.repository';
 import { type InvitationWithEnterprise } from 'src/profile/domain/invitation';
 
@@ -29,12 +29,31 @@ export class ProfileInvitationRepository implements ProfileInvitationRepositoryP
     });
   }
 
-  async accept(invitation: Invitation): Promise<void> {
-    await this.prisma.invitation.update({
-      where: { id: invitation.id },
-      data: {
-        status: InvitationStatus.accepted,
-      },
+  async accept(invitation: Invitation, userId: number): Promise<void> {
+    await this.prisma.$transaction(async (prisma) => {
+      await prisma.invitation.update({
+        where: { id: invitation.id },
+        data: {
+          status: InvitationStatus.accepted,
+        },
+      });
+
+      let employee = await prisma.employee.findFirst({
+        where: {
+          userId: userId,
+          enterpriseId: invitation.enterpriseId,
+        },
+      });
+
+      if (!employee) {
+        employee = await prisma.employee.create({
+          data: {
+            userId: userId,
+            enterpriseId: invitation.enterpriseId,
+            position: 'employee',
+          },
+        });
+      }
     });
   }
 
@@ -45,27 +64,6 @@ export class ProfileInvitationRepository implements ProfileInvitationRepositoryP
         status: InvitationStatus.rejected,
       },
     });
-  }
-
-  async addEmployee(enterpriseId: string, userId: number): Promise<Employee> {
-    let employee = await this.prisma.employee.findFirst({
-      where: {
-        userId,
-        enterpriseId,
-      },
-    });
-
-    if (!employee) {
-      employee = await this.prisma.employee.create({
-        data: {
-          userId,
-          enterpriseId,
-          position: 'employee',
-        },
-      });
-    }
-
-    return employee;
   }
 }
 

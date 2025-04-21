@@ -1,0 +1,4 @@
+{
+    "testing.automaticallyOpenPeekViewDuringAutoRun": false,
+    "task.allowAutomaticTasks": "off"
+}

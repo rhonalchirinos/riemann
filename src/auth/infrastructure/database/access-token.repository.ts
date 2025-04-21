@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AccessToken, Prisma } from '@prisma/client';
-import { PrismaService } from '@database/prisma.service';
+import { PrismaService } from 'src/configuration/database/prisma.service';
 import { AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
 
 @Injectable()

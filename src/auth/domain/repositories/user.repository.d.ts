@@ -23,7 +23,7 @@ export interface UserRepositoryPort {
   /**
    *
    */
-  findById(id: number): Promise<User | null>;
+  findById(id: number, optional?: any): Promise<User | null>;
 
   /**
    *

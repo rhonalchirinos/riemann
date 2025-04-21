@@ -5,6 +5,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
@@ -26,14 +27,15 @@
         "./src/auth/*"
       ],
       "@database/*": [
-        "./src/database/*"
+        "src/configuration/database/*"
       ]
     }
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts"
-  ],
+    "src/**/*.d.ts",
+    "test/**/*"
+, "src/configuration/cache/cache"  ],
   "exclude": [
     "node_modules",
     "dist"

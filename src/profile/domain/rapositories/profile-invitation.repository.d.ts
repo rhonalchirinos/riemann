@@ -11,9 +11,7 @@ export interface ProfileInvitationRepositoryPort {
 
   findByToken(email: string, token: string): Promise<Invitation | null>;
 
-  accept(invitation: Invitation): Promise<void>;
+  accept(invitation: Invitation, userId: number): Promise<void>;
 
   reject(invitation: Invitation): Promise<void>;
-
-  addEmployee(enterpriseId: string, userId: number): Promise<Employee>;
 }

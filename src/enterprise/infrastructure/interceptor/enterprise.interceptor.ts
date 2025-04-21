@@ -12,7 +12,6 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { Enterprise } from '@prisma/client';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 import { type AuthRequest } from 'src/shared/dto/request';
 

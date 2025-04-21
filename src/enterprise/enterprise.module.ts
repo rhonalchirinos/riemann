@@ -1,5 +1,4 @@
 import { Module, Scope } from '@nestjs/common';
-import { DatabaseModule } from 'src/database/database.module';
 import { EnterpriseListUseCase } from './application/enterprise-list.usecase';
 import {
   EnterpriseRepository,
@@ -28,6 +27,10 @@ import { type AuthRequest } from 'src/shared/dto/request';
 import { EnterpriseController } from './infrastructure/controllers/enterprise.controller';
 import { EnterprisesController } from './infrastructure/controllers/enterprises.controller';
 import { MailerService } from '@nestjs-modules/mailer';
+import {
+  EmployeeRepository,
+  PG_ENTERPRISE_EMPLOYEE_REPOSITORY,
+} from './infrastructure/databases/employee.repository';
 
 const controllers = [
   EnterpriseController,
@@ -41,30 +44,31 @@ const controllers = [
 ];
 
 const usecases = [
-  EnterpriseListUseCase,
-  EnterpriseCreateUseCase,
-  EnterpriseDeleteUseCase,
-  EnterpriseShowUseCase,
-  EnterpriseUpdateUseCase,
-].map((useCase) => ({
-  provide: useCase,
-  useFactory: (repository: EnterpriseRepositoryPort, cache: Cache) =>
-    new useCase(repository, cache),
-  inject: [PG_ENTERPRISE_REPOSITORY, CACHE_MANAGER],
-}));
+  {
+    provide: EnterpriseCreateUseCase,
+    useFactory: (repository: EnterpriseRepositoryPort) => new EnterpriseCreateUseCase(repository),
+    inject: [PG_ENTERPRISE_REPOSITORY],
+  },
+  ...[
+    EnterpriseListUseCase,
+    EnterpriseDeleteUseCase,
+    EnterpriseShowUseCase,
+    EnterpriseUpdateUseCase,
+  ].map((useCase) => ({
+    provide: useCase,
+    useFactory: (repository: EnterpriseRepositoryPort, cache: Cache) =>
+      new useCase(repository, cache),
+    inject: [PG_ENTERPRISE_REPOSITORY, CACHE_MANAGER],
+  })),
+];
 
-const usecasesInvitatios = [
-  InvitationListUseCase,
-  InvitationDeleteUseCase,
-  //  InvitationInviteUseCase,
-].map((useCase) => ({
+const usecasesInvitatios = [InvitationListUseCase, InvitationDeleteUseCase].map((useCase) => ({
   provide: useCase,
   useFactory: (repository: InvitationRepositoryPort) => new useCase(repository),
   inject: [PG_INVITATION_REPOSITORY],
 }));
 
 @Module({
-  imports: [DatabaseModule, CacheModule.register({ ttl: 60, max: 1000 })],
   controllers: [...controllers],
   providers: [
     {
@@ -74,6 +78,10 @@ const usecasesInvitatios = [
     {
       provide: PG_INVITATION_REPOSITORY,
       useClass: InvitationRepository,
+    },
+    {
+      provide: PG_ENTERPRISE_EMPLOYEE_REPOSITORY,
+      useClass: EmployeeRepository,
     },
 
     /**

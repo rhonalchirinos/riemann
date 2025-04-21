@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { type UserRepositoryPort } from '@auth/domain/repositories/user.repository';
 import { type AccessTokenRepositoryPort } from 'src/auth/domain/repositories/access-token.repository';
