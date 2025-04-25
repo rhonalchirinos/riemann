@@ -25,7 +25,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-    command: sh -c "yarn install --frozen-lockfile && yarn run start:dev"
+    command: sh -c "yarn install && yarn run start:dev"
     networks:
       - sriemann
     ports:
