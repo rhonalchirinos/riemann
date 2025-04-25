@@ -1,0 +1,43 @@
+name: GitHub Actions Demo
+
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+
+on: [push]
+# on:
+#   push:
+#     branches:
+#       - production
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # - name: Show locals
+      #   run: pwd && ls -la
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install Yarn manually
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
+      - name: Verify Yarn installation
+        run: |
+          yarn --version || npm install -g yarn
+          yarn --version
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn run build
+
+      - name: Run tests
+        run: yarn test
