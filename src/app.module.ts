@@ -19,7 +19,6 @@ import { CustomJwtModule } from './configuration/jwt/jwt.module';
     CustomMailModule,
     AuthModule,
     ProfileModule,
-    EnterpriseModule,
     AdminModule,
     HomeModule,
     EnterpriseModule,
