@@ -45,9 +45,6 @@ export class EnterpriseUpdateUseCase {
     return enterprise;
   }
 
-  /**
-   *
-   */
   private changes(enterprise: Enterprise, values: EnterpriseCreateDto) {
     const data = {};
 

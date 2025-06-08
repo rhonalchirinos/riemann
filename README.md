@@ -119,3 +119,14 @@ HTTP status codes
 
 Making sure the use case is called with the correct arguments
 
+
+
+
+
+act --container-architecture linux/amd64
+
+
+act -s SERVER_IP=192.168.1.22 -s SERVER_USER=rhonal -s SERVER_SSH_PRIVATE_KEY="$(cat ~/.ssh/id_ed25519)" --container-architecture linux/amd64
+
+
+act -s SERVER_IP=192.168.1.22 -s SERVER_USER=rhonal -s SERVER_SSH_PRIVATE_KEY="$(cat ~/.ssh/id_ed25519)" --container-architecture linux/amd64  --privileged --network host --artifact-server-path /tmp/artifacts

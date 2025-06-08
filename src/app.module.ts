@@ -1,28 +1,24 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '@auth/auth.module';
 import { AdminModule } from './admin/admin.module';
-import { CustomDatabaseModule } from './configuration/database/database.module';
 import { HomeModule } from './home/home.module';
-import { CustomMailModule } from './configuration/mail/mail.module';
-import { CustomConfigModule } from './configuration/config/config.module';
+
 import { EnterpriseModule } from './enterprise/enterprise.module';
 import { ProfileModule } from './profile/profile.module';
-import { CustomCacheModule } from './configuration/cache/cache.module';
-import { CustomJwtModule } from './configuration/jwt/jwt.module';
+
+import * as configurations from './configuration';
+import { CaptchaModule } from './captcha/captcha.module';
+
+const modules = [
+  AuthModule,
+  ProfileModule,
+  AdminModule,
+  HomeModule,
+  EnterpriseModule,
+  CaptchaModule,
+];
 
 @Module({
-  imports: [
-    CustomDatabaseModule,
-    CustomJwtModule,
-    CustomCacheModule,
-    CustomConfigModule,
-    CustomMailModule,
-    AuthModule,
-    ProfileModule,
-    AdminModule,
-    HomeModule,
-    EnterpriseModule,
-  ],
-  exports: [CustomConfigModule, CustomCacheModule],
+  imports: [...Object.values(configurations), ...modules],
 })
 export class AppModule {}

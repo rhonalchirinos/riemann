@@ -1,9 +1,14 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { hash, compare, genSalt } from 'bcryptjs';
+import { Injectable } from '@nestjs/common';
+import { verify, hash, argon2d } from 'argon2';
 
 @Injectable()
 export class EncryptionService {
-  private readonly saltRounds: number = 10;
+  private readonly saltRounds: number = 5;
+  // mejorar la seguridad de esto
+  private readonly options = {
+    memoryCost: 2 ** 8,
+    type: argon2d,
+  };
 
   /**
    *
@@ -11,13 +16,8 @@ export class EncryptionService {
    * @returns
    */
   async hashPassword(password: string): Promise<string> {
-    const salt = await genSalt(this.saltRounds);
-    const hashedPassword = await hash(password, salt);
-
-    if (!hashedPassword) {
-      throw new HttpException('Error hashing password', 500);
-    }
-
+    // const salt = await genSalt(this.saltRounds);
+    const hashedPassword = await hash(password, this.options);
     return hashedPassword;
   }
 
@@ -25,6 +25,9 @@ export class EncryptionService {
    *
    */
   async comparePassword(password: string, hash: string): Promise<boolean> {
-    return await compare(password, hash);
+    console.log(password, hash);
+    const hasEqual = await verify(hash, password);
+
+    return hasEqual;
   }
 }

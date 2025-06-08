@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
-import { ProfileRepositoryPort } from 'src/profile/domain/rapositories/profile.repository';
 import { Profile } from 'src/profile/domain/profile';
 import { Prisma } from '@prisma/client';
+
+import { type ProfileRepositoryPort } from 'src/profile/domain/rapositories/profile.repository';
 
 @Injectable()
 export class ProfileCacheRepository implements ProfileRepositoryPort {

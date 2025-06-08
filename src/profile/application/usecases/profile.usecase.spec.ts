@@ -47,6 +47,7 @@ describe('AuthController', () => {
       emailVerified: false,
       createdAt: new Date(),
       updatedAt: null,
+      deletedAt: null,
     };
     mockContext.user.findUnique.mockResolvedValue(user);
 

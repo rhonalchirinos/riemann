@@ -21,13 +21,10 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "src/*": [
-        "./src/*"
+        "src/*"
       ],
       "@auth/*": [
-        "./src/auth/*"
-      ],
-      "@database/*": [
-        "src/configuration/database/*"
+        "src/auth/*"
       ]
     }
   },
@@ -35,7 +32,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "test/**/*"
-, "src/configuration/cache/cache"  ],
+  ],
   "exclude": [
     "node_modules",
     "dist"

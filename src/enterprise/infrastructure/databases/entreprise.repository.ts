@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Global, Injectable } from '@nestjs/common';
 import { Employee, Enterprise, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/configuration/database/prisma.service';
 import { type EnterpriseRepositoryPort } from 'src/enterprise/domain/enterprise.repository';
 
+@Global()
 @Injectable()
 export class EnterpriseRepository implements EnterpriseRepositoryPort {
   constructor(private prisma: PrismaService) {}

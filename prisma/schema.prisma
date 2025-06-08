@@ -19,19 +19,27 @@ enum InvitationStatus {
   rejected
 }
 
+enum ChallengeType {
+  alphanumeric
+  alphanumeric_case_sensitive
+}
+
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
   password      String
   name          String?
-  emailVerified Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime? @updatedAt()
+  emailVerified Boolean @default(false)
 
-  accessTokens AccessToken[]
-  entreprises  Enterprise[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+
+  accessTokens AccessToken[] @relation("UserTokens")
+  enterprises  Enterprise[]  @relation("UserEnterprises")
   employees    Employee[]
 
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -41,7 +49,7 @@ model AccessToken {
   expiresAt    DateTime?
 
   userId Int
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation("UserTokens", fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
 
@@ -55,13 +63,16 @@ model Enterprise {
   description String @db.VarChar(300)
 
   ownerId Int
-  owner   User @relation(fields: [ownerId], references: [id])
+  owner   User @relation("UserEnterprises", fields: [ownerId], references: [id])
 
   createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt()
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
 
-  employees   Employee[]
-  invitations Invitation[]
+  employees         Employee[]
+  invitations       Invitation[]
+  captchasTemplates CaptchaTemplate[]
+  captchas          Captcha[]
 
   @@map("enterprises")
 }
@@ -77,7 +88,7 @@ model Employee {
   user   User? @relation(fields: [userId], references: [id])
 
   createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt()
+  updatedAt DateTime? @updatedAt
 
   @@map("employees")
 }
@@ -93,9 +104,81 @@ model Invitation {
   enterprise   Enterprise @relation(fields: [enterpriseId], references: [id])
 
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt()
+  updatedAt  DateTime? @updatedAt
   acceptedAt DateTime?
   rejectedAt DateTime?
 
+  @@index([email])
+  @@index([status])
   @@map("invitations")
+}
+
+model CaptchaTemplate {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @unique @db.VarChar(255)
+  type         ChallengeType
+  isActive     Boolean       @default(true)
+  privateKey   String        @db.VarChar(128)
+  publicKey    String        @db.VarChar(128)
+  enterpriseId String?       @db.Uuid
+  enterprise   Enterprise?   @relation(fields: [enterpriseId], references: [id])
+  createdAt    DateTime      @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime?     @default(now()) @updatedAt @db.Timestamp(6)
+  deletedAt    DateTime?     @db.Timestamp(6)
+
+  captchas Captcha[]
+
+  @@index([privateKey], name: "idx_captcha_template_private_key")
+  @@index([publicKey], name: "idx_captcha_template_public_key")
+  @@index([type], name: "idx_captcha_template_type")
+  @@index([isActive], name: "idx_captcha_template_is_active")
+  @@index([enterpriseId], name: "idx_captcha_template_enterprise_id")
+  @@map("captcha_templates")
+}
+
+model Captcha {
+  id String @id @default(uuid()) @db.Uuid
+
+  templateId String?          @db.Uuid
+  template   CaptchaTemplate? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  enterpriseId String?     @db.Uuid
+  enterprise   Enterprise? @relation(fields: [enterpriseId], references: [id])
+
+  type     ChallengeType @default(alphanumeric)
+  answer   String        @db.VarChar(32)
+  attempts Int           @default(0)
+  isSolved Boolean       @default(false)
+
+  userIdentifier String? @db.VarChar(255)
+  ipAddress      String? @db.VarChar(45)
+
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @updatedAt @db.Timestamp(6)
+  deletedAt DateTime? @db.Timestamp(6)
+
+  captchaAttempts CaptchaAttempt[]
+
+  @@index([templateId], name: "idx_captcha_template_id")
+  @@index([type], name: "idx_captcha_type")
+  @@index([isSolved], name: "idx_captcha_is_solved")
+  @@index([userIdentifier], name: "idx_captcha_user_identifier")
+  @@map("captchas")
+}
+
+model CaptchaAttempt {
+  id String @id @default(uuid()) @db.Uuid
+
+  captchaId String  @db.Uuid
+  captcha   Captcha @relation(fields: [captchaId], references: [id], onDelete: Cascade)
+
+  answer      String   @db.VarChar(32)
+  attemptedAt DateTime @default(now()) @db.Timestamp(6)
+
+  isCorrect      Boolean?
+  userIdentifier String?  @db.VarChar(255)
+  ipAddress      String?  @db.VarChar(45)
+
+  @@index([captchaId])
+  @@map("captcha_attempts")
 }

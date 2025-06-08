@@ -1,0 +1,82 @@
+
+name: Run Tests (Node.js Alpine Docker)
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22-alpine
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          yarn install --immutable
+
+      - name: Build project
+        run: yarn build
+
+      - name: Run tests
+        run: |
+          yarn test
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: enviroment
+        run: ls -la
+
+      - name: Prepare deploy folder
+        run: |
+          mkdir riemann 
+          cp package.json riemann/
+          cp yarn.lock riemann/
+          cp -r dist riemann/dist
+          cp -r prisma riemann/prisma
+          cp -r resources riemann/resources
+
+      - name: Deploy with rsync
+        uses: burnett01/rsync-deployments@5.2
+        with:
+          switches: -avzr --delete
+          path: riemann/
+          remote_path: /home/rhonal/riemann
+          remote_host: ${{ secrets.SERVER_IP }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+
+      - name: SSH and deploy
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $SERVER_USER@$SERVER_IP "
+            sh /home/rhonal/reload.sh
+          "
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}

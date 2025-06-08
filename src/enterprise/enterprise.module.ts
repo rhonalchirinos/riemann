@@ -112,5 +112,6 @@ const usecasesInvitatios = [InvitationListUseCase, InvitationDeleteUseCase].map(
       scope: Scope.REQUEST,
     },
   ],
+  exports: [PG_ENTERPRISE_REPOSITORY],
 })
 export class EnterpriseModule {}

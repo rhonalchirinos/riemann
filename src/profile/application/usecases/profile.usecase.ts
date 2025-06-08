@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'src/profile/domain/profile';
-import { ProfileRepositoryPort } from 'src/profile/domain/rapositories/profile.repository';
+import { type ProfileRepositoryPort } from 'src/profile/domain/rapositories/profile.repository';
 
 @Injectable()
 export class ProfileUsecase {
